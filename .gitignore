@@ -5,6 +5,10 @@ __pycache__/
 # C extensions
 *.so
 
+
+# These will probably be logging files, don't need to be tracked
+*.txt
+
 # Distribution / packaging
 .Python
 env/
@@ -46,6 +50,10 @@ coverage.xml
 # Translations
 *.mo
 *.pot
+
+# Python intermediate stuff
+*.pyc
+*.py~
 
 # Django stuff:
 *.log
