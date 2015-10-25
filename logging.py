@@ -7,7 +7,7 @@ DEBUG_PRINTING_ON = True
 HARD_ASSERTS_ON = True
 
 # quick debug printing
-def dPrint(line):
+def dprint(line):
    if(DEBUG_PRINTING_ON):
       print line
 
