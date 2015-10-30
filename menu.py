@@ -3,26 +3,33 @@ from graphicsHandler import *
 from keybindings import *
 import sys
 
-def mainMenu(screen):
+def mainMenu(screen, FPS=60):
    clearAllGraphics(screen)
    options = ["Play", "Settings", "Exit"]
    result = showMenu("Main Menu", options, screen)
-   if(result == 0): pass # play the game
-   if(result == 1): settingsMenu(screen)
-   if(result == 2): sys.exit(1) # they quit
+   return result
 
-def settingsMenu(screen):
+
+def settingsMenu(screen, FPS=60):
    clearAllGraphics(screen)
    options = ["Keybindings", "Sound", "Back"]
    result = showMenu("Settings", options, screen)
-   if(result == 0): pass # do keybindings here
-   if(result == 1): pass # do sound settings here
-   
-   mainMenu(screen) # they backed out
+   if result == 0: pass # do keybindings here
+   elif result == 1: pass # do sound here
+
+   return result
+
+def pauseMenu(screen, FPS=60):
+   clearAllGraphics(screen)
+   options = ["Resume", "Settings", "Exit"]
+   result = showMenu("Paused", options, screen)
+   if result == 0: pass # just return, continue game
+   elif result == 1: settingsMenu(screen, FPS)
+   elif result == 2: sys.exit(1)
+   return result
 
 # currently just one kind of menu, can add more later
-def showMenu(title, optionTexts, screen):
-   FPS = 60
+def showMenu(title, optionTexts, screen, FPS=60):
    clock = pygame.time.Clock()
    mainloop = True
    keysdown = []

@@ -7,5 +7,6 @@ def keyBinding(keyid):
       return pygame.K_w
    elif keyid == "MENU_ACCEPT":
       return pygame.K_RETURN
-   
+   elif keyid == "PAUSE":
+      return pygame.K_p
 
