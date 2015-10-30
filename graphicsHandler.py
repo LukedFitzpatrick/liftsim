@@ -86,6 +86,16 @@ def registerText(text, thefont, colour, left, top,
    currentGraphicsObjects.append(g)
 
 
+def clearAllGraphics(screen):
+   global currentGraphicsObjects
+   currentGraphicsObjects = []
+   background = pygame.Surface(screen.get_size())
+   background = background.convert()
+   background.fill((0, 0, 0))
+   screen.blit(background, (0, 0))
+   pygame.display.flip()
+
+
 def displayAll(screen):
    global currentGraphicsObjects
 
