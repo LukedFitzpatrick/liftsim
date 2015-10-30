@@ -1,5 +1,7 @@
+from graphicsHandler import *
+
 class GameObject:
-   def __init__(self, debugName, x, y, graphic=None, physics=None):
+   def __init__(self, debugName, x, y, graphic=None):
       self.debugName = debugName
       self.x = x
       self.y = y
@@ -13,10 +15,10 @@ class GameObject:
 
       
 class Graphic:
-   def __init__(self, imageFrames, frameLifeSpan, priority, parent=None):
-      self.frames = imageFrames
+   def __init__(self, frames, frameLifeSpans, priority, parent=None):
+      self.frames = frames
       self.parent = parent
-      self.frameLifeSpan = frameLifeSpan
+      self.frameLifeSpans = frameLifeSpans
       self.priority = priority
       self.currentFrameIndex = 0
 
@@ -24,6 +26,7 @@ class Graphic:
       # possibly update the animation state here etc.
       fLifeSpan = 1
       priority = 1
-      registerImage(self.imageFrames[self.currentFrameIndex], 
+      registerImage(self.frames[self.currentFrameIndex], 
                     self.parent.x, self.parent.y, 
-                    frameLifeSpan, priority, self.parent.debugName)
+                    self.frameLifeSpans[self.currentFrameIndex], 
+                    priority, self.parent.debugName)
