@@ -39,9 +39,22 @@ class GraphicsObject:
       elif self.type == "rect":
          # in this case, rep is a RectangleWrapper
          pygame.draw.rect(screen, self.rep.colour, self.rep.rect, self.rep.thickness)
+      elif self.type == "text":
+         # the rep is a TextWrapper
+         label = self.rep.thefont.render(self.rep.text, False, self.rep.colour)
+         screen.blit(label, (self.rep.left, self.rep.top))
          
+
+class TextWrapper:
+   def __init__(self, text, thefont, colour, left, top):
+      self.text = text
+      self.thefont = thefont
+      self.colour = colour
+      self.left = left
+      self.top = top
+
 class RectangleWrapper:
-   def __init__(self, colour,thickness, left, top, width, height):
+   def __init__(self, colour, thickness, left, top, width, height):
       self.rect = pygame.Rect(left, top, width, height)
       self.colour = colour
       self.thickness = thickness
@@ -51,16 +64,27 @@ class RectangleWrapper:
 def registerImage(image, screenx, screeny,frameLifeSpan, 
                            priority=1, debugName=""):
    
-   g = GraphicsObject("image", image, screenx, screeny, frameLifeSpan, priority, debugName)
+   g = GraphicsObject("image", image, screenx, screeny, 
+                      frameLifeSpan, priority, debugName)
    global currentGraphicsObjects
    currentGraphicsObjects.append(g)
 
-def registerRect(colour,thickness, left, top, width, height, frameLifeSpan, priority, debugName):
+def registerRect(colour,thickness, left, top, width, height, 
+                 frameLifeSpan, priority, debugName):
    r = RectangleWrapper(colour, thickness, left, top, width, height)
-   g = GraphicsObject("rect", r, left, top, frameLifeSpan, priority, debugName)
+   g = GraphicsObject("rect", r, left, top, frameLifeSpan, 
+                      priority, debugName)
    global currentGraphicsObjects
    currentGraphicsObjects.append(g)
    
+def registerText(text, thefont, colour, left, top,
+                 frameLifeSpan, priority, debugName):
+   t = TextWrapper(text, thefont, colour, left, top)
+   g = GraphicsObject("text", t, left, top, frameLifeSpan,
+                      priority, debugName)
+   global currentGraphicsObjects
+   currentGraphicsObjects.append(g)
+
 
 def displayAll(screen):
    global currentGraphicsObjects
