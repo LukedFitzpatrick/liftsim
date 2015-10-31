@@ -42,7 +42,7 @@ while mainloop:
    screen.blit(background, (0, 0))
 
    screen.blit(images[index], (WIDTH/2 - images[index].get_width()/2, 
-                                  HEIGHT/2 + 40 - images[index].get_height()/2))
+                                  150 - images[index].get_height()))
    colour = (255, 255, 255)
    label = font.render("FPS: "+str(FPS)+"   Q down W up",1,colour)
    screen.blit(label, (0, 0))
