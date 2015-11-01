@@ -19,18 +19,8 @@ class GraphicsObject:
       self.screeny = screeny
       self.frameLifeSpan = frameLifeSpan
       self.currentFrameLifeSpan = frameLifeSpan
-      if(frameLifeSpan > 0):
-         self.active = True
-      else:
-         self.active = False
-
       self.priority = priority
       self.debugName = debugName
-
-   def update(self):
-      self.frameLifeSpan -= 1
-      if(self.frameLifeSpan <= 0):
-         self.active = False   
 
    def show(self, screen):
       if self.type == "image":
@@ -67,7 +57,8 @@ def registerImage(image, screenx, screeny,frameLifeSpan,
    g = GraphicsObject("image", image, screenx, screeny, 
                       frameLifeSpan, priority, debugName)
    global currentGraphicsObjects
-   currentGraphicsObjects.append(g)
+   if not g in currentGraphicsObjects:
+      currentGraphicsObjects.append(g)
 
 def registerRect(colour,thickness, left, top, width, height, 
                  frameLifeSpan, priority, debugName):
@@ -108,10 +99,11 @@ def displayAll(screen):
    currentGraphicsObjects.sort(key=lambda x: x.priority) 
 
    for o in currentGraphicsObjects:
-      if o.active:
+      if o.frameLifeSpan > 0:
          o.show(screen)
-         o.update()
-      else:
+      
+      o.frameLifeSpan -= 1
+      if(o.frameLifeSpan <= 0):
          currentGraphicsObjects.remove(o)
 
    pygame.display.flip()

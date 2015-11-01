@@ -11,10 +11,19 @@ pygame.init()
 def playGame(screen):
    # temporary level generator here, to be replaced
    gameObjects = []
-   playerimage = pygame.image.load(os.path.join("graphics/charv2.png"))
-   playergraphic = Graphic([playerimage], [1], 1)
+   playerimage1 = pygame.image.load(os.path.join("graphics/idle1.png"))
+   playergraphic = Graphic([playerimage1], [1], 1)
    playerobject = GameObject("Player", 100, 100, playergraphic)
    gameObjects.append(playerobject)
+
+   bgi = pygame.image.load(os.path.join("graphics/lightbackground.png"))
+   bggraphic = Graphic([bgi], [1], 0)
+   bgobject = GameObject("Background", 0, 0, bggraphic)
+   gameObjects.append(bgobject)
+
+   
+
+
    playLevel(gameObjects, screen)
 
 

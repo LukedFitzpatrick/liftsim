@@ -27,8 +27,7 @@ def playLevel(gameObjects, screen, FPS=60):
       if keyBinding("PAUSE") in keysdown:
          keysdown.remove(keyBinding("PAUSE"))
          pauseMenu(screen)
-
-
+      
       for o in gameObjects:
          o.update(gameObjects)          
       

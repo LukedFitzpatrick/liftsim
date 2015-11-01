@@ -23,10 +23,10 @@ class Graphic:
       self.currentFrameIndex = 0
 
    def update(self):
-      # possibly update the animation state here etc.
-      fLifeSpan = 1
-      priority = 1
+      # possibly update the animation state here etc
+      self.currentFrameIndex += 1
+      self.currentFrameIndex = self.currentFrameIndex % len(self.frames)
       registerImage(self.frames[self.currentFrameIndex], 
                     self.parent.x, self.parent.y, 
-                    self.frameLifeSpans[self.currentFrameIndex], 
-                    priority, self.parent.debugName)
+                    self.frameLifeSpans[self.currentFrameIndex],
+                    self.priority, self.parent.debugName)
