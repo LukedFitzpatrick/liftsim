@@ -27,8 +27,15 @@ def playLevel(gameObjects, screen, FPS=60):
       if keyBinding("PAUSE") in keysdown:
          keysdown.remove(keyBinding("PAUSE"))
          pauseMenu(screen)
-      
+      if keyBinding("NEXT_LEVEL") in keysdown:
+         keysdown.remove(keyBinding("NEXT_LEVEL"))
+         return 1
+      if keyBinding("PREVIOUS_LEVEL") in keysdown:
+         keysdown.remove(keyBinding("PREVIOUS_LEVEL"))
+         return -1
+
+         
       for o in gameObjects:
-         o.update(gameObjects)          
+         o.update(gameObjects, keysdown)          
       
       displayAll(screen)

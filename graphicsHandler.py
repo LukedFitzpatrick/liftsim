@@ -5,7 +5,6 @@ import pygame
 currentGraphicsObjects = []
 
 
-
 # a GraphicsObject is something that will shortly be displayed
 # doesn't get updated other than a frame counter
 # type = "image" "rect" "circle" etc.
