@@ -2,6 +2,8 @@ from logging import *
 from graphicsHandler import *
 from keybindings import *
 from menu import *
+from gameObject import *
+from levels import *
 import sys
 
 
@@ -10,8 +12,11 @@ def findLifts(gameObjects):
    for o in gameObjects:
       if o.lift:
          lifts.append(o.lift)
-
    return lifts
+
+def findActiveLift(gameObjects):
+   for o in findLifts(gameObjects):
+      if(o.active): return o
 
 def prepareLifts(lifts):
    for l in lifts:
@@ -29,13 +34,57 @@ def changeActiveLift(lifts, increment):
    lifts[activeIndex].makeInactive()
    lifts[nextIndex].makeActive()
 
+def updateCamera(aLift, cameraX, cameraY):
+   newcameraY = aLift.parent.y - (SCREEN_HEIGHT/2)
+   newcameraY = max(newcameraY, aLift.shaftTop)
+   newcameraY = min(newcameraY, aLift.shaftBottom - SCREEN_HEIGHT)
+      
+   newcameraX = aLift.parent.x - (SCREEN_WIDTH/2)
+   newcameraX = max(newcameraX, 0)
+   newcameraX = min(newcameraX, getLevelWidth()-SCREEN_WIDTH)
+   
+   if(newcameraY > cameraY):
+      delta = newcameraY - cameraY
+      if delta > MAX_Y_CAMERA_SHIFT:
+         cameraY = cameraY + MAX_Y_CAMERA_SHIFT
+      else:
+         cameraY = newcameraY
+   elif(newcameraY < cameraY):
+      delta = cameraY - newcameraY
+      if delta > MAX_Y_CAMERA_SHIFT:
+         cameraY = cameraY - MAX_Y_CAMERA_SHIFT
+      else:
+         cameraY = newcameraY
+
+   if(newcameraX > cameraX):
+      delta = newcameraX - cameraX
+      if delta > MAX_X_CAMERA_SHIFT:
+         cameraX = cameraX + MAX_X_CAMERA_SHIFT
+      else:
+         cameraX = newcameraX
+   elif(newcameraX < cameraX):
+      delta = cameraX - newcameraX
+      if delta > MAX_X_CAMERA_SHIFT:
+         cameraX = cameraX - MAX_X_CAMERA_SHIFT
+      else:
+         cameraX = newcameraX
+
+   return (cameraX, cameraY)
+
+
+def findObjectByName(name, gameObjects):
+   for o in gameObjects:
+      if o.debugName == name:
+         return o
 
 def playLevel(gameObjects, screen, FPS=60):
    keysdown = []
    mainloop = True
    clock = pygame.time.Clock()
-
    prepareLifts(findLifts(gameObjects))
+
+   cameraX = 0
+   cameraY = 0
 
    while mainloop:
       milliseconds = clock.tick(FPS) 
@@ -67,8 +116,14 @@ def playLevel(gameObjects, screen, FPS=60):
          keysdown.remove(keyBinding("PREVIOUS_LIFT"))
          changeActiveLift(findLifts(gameObjects), -1)
 
-         
+      
       for o in gameObjects:
          o.update(gameObjects, keysdown)          
       
-      displayAll(screen)
+      aLift = findActiveLift(gameObjects)
+      (cameraX, cameraY) = updateCamera(aLift, cameraX, cameraY)
+
+      cameraTextObject = findObjectByName("CameraText", gameObjects)
+      cameraTextObject.text.text = "("+str(cameraX)+", "+str(cameraY)+")"
+
+      displayAll(screen, cameraX, cameraY)

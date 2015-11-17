@@ -11,7 +11,7 @@ currentGraphicsObjects = []
 
 class GraphicsObject:
    def __init__(self, type, representation, screenx, screeny, 
-                frameLifeSpan, priority, debugName):
+                frameLifeSpan, priority, debugName, immovable=False):
       self.type = type
       self.rep = representation
       self.screenx = screenx
@@ -20,11 +20,18 @@ class GraphicsObject:
       self.currentFrameLifeSpan = frameLifeSpan
       self.priority = priority
       self.debugName = debugName
+      self.immovable = False
 
-   def show(self, screen):
+   def show(self, screen, camerax, cameray):
+      if self.immovable:
+         camerax = 0
+         cameray = 0
+
       if self.type == "image":
          # in this case, rep is a straight image
-         screen.blit(self.rep, (self.screenx, self.screeny))
+         screen.blit(self.rep, (self.screenx-camerax, self.screeny-cameray))
+      
+      # todo add camera to these types, for now assume they're immovable
       elif self.type == "rect":
          # in this case, rep is a RectangleWrapper
          pygame.draw.rect(screen, self.rep.colour, self.rep.rect, self.rep.thickness)
@@ -86,7 +93,7 @@ def clearAllGraphics(screen):
    pygame.display.flip()
 
 
-def displayAll(screen):
+def displayAll(screen, cameraX=0, cameraY=0):
    global currentGraphicsObjects
 
    background = pygame.Surface(screen.get_size())
@@ -99,7 +106,7 @@ def displayAll(screen):
 
    for o in currentGraphicsObjects:
       if o.frameLifeSpan > 0:
-         o.show(screen)
+         o.show(screen, cameraX, cameraY)
       
       o.frameLifeSpan -= 1
       if(o.frameLifeSpan <= 0):
