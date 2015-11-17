@@ -19,4 +19,7 @@ def keyBinding(keyid):
       return pygame.K_s
    elif keyid == "LIFT_STOP":
       return pygame.K_SPACE
-
+   elif keyid == "NEXT_LIFT":
+      return pygame.K_d
+   elif keyid == "PREVIOUS_LIFT":
+      return pygame.K_a
