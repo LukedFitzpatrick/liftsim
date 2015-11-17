@@ -1,12 +1,13 @@
 from logging import *
 from graphicsHandler import *
 from keybindings import *
+from constants import *
 import sys
 
 def mainMenu(screen, FPS=60):
    clearAllGraphics(screen)
    options = ["Play", "Settings", "Exit"]
-   result = showMenu("Main Menu", options, screen)
+   result = showMenu("Lift Operator", options, screen)
    return result
 
 
@@ -37,21 +38,25 @@ def showMenu(title, optionTexts, screen, FPS=60):
 
    while mainloop:
       milliseconds = clock.tick(FPS) 
-      f = pygame.font.SysFont("monospace", 50)
-      registerText(title, f, (150, 150, 150), 80, 40, 1, 1, "title")
       
-      f = pygame.font.SysFont("monospace", 30)
+      registerRect(MENU_BACKGROUND_COLOUR, 0, 0, 0, SCREEN_WIDTH,
+                   SCREEN_HEIGHT, 1, 0, "Background rect")
+
+      f = pygame.font.Font("graphics/font/UQ_0.ttf", 80)
+      registerText(title, f, MENU_TITLE_COLOUR, 40, 40, 1, 1, "title")
       
-      yincrement = 40
+      f = pygame.font.Font("graphics/font/UQ_0.ttf", 50)
+      
+      yincrement = 80
       index = 0
       for o in optionTexts:
          if(index != selectedIndex):
-            colour = (80, 80, 80)
+            colour = MENU_INACTIVE_COLOUR
          else:
-            colour = (150, 150, 150)
+            colour = MENU_ACTIVE_COLOUR
 
          registerText(o,f,colour,100,
-                      140+(index*yincrement), 1, 1, "menuitem")
+                      200+(index*yincrement), 1, 1, "menuitem")
          index += 1
          
       for event in pygame.event.get():
