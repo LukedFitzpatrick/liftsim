@@ -7,6 +7,8 @@ from levels import *
 import sys
 
 
+
+
 def findLifts(gameObjects):
    lifts = []
    for o in gameObjects:
@@ -103,6 +105,7 @@ def playLevel(gameObjects, screen, FPS=60):
       if keyBinding("PAUSE") in keysdown:
          keysdown.remove(keyBinding("PAUSE"))
          pauseMenu(screen)
+         keysdown = []
       if keyBinding("NEXT_LEVEL") in keysdown:
          keysdown.remove(keyBinding("NEXT_LEVEL"))
          return 1
@@ -115,15 +118,21 @@ def playLevel(gameObjects, screen, FPS=60):
       if keyBinding("PREVIOUS_LIFT") in keysdown:
          keysdown.remove(keyBinding("PREVIOUS_LIFT"))
          changeActiveLift(findLifts(gameObjects), -1)
-
-      
-      for o in gameObjects:
-         o.update(gameObjects, keysdown)          
       
       aLift = findActiveLift(gameObjects)
+      (nearestFloor, index) = getClosestFloorHeight(aLift.parent.y)
+      for o in gameObjects:
+         o.update(gameObjects, keysdown, nearestFloor)          
+      
       (cameraX, cameraY) = updateCamera(aLift, cameraX, cameraY)
 
       cameraTextObject = findObjectByName("CameraText", gameObjects)
       cameraTextObject.text.text = "("+str(cameraX)+", "+str(cameraY)+")"
+
+      floorTextObject = findObjectByName("FloorText", gameObjects)
+
+      floorTextObject.text.text = "Floor " + str(index)
+      floorTextObject.y = nearestFloor - cameraY
+      floorTextObject.x = aLift.parent.x + 32 - cameraX
 
       displayAll(screen, cameraX, cameraY)

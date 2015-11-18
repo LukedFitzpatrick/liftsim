@@ -24,5 +24,7 @@ def constant(id):
       return 10
    elif id == "MAX_Y_CAMERA_SHIFT":
       return 40
+   elif id == "LIFT_STOPPING_V":
+      return 3
 
 

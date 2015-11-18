@@ -23,13 +23,13 @@ class GameObject:
       else:
          self.lift = None
 
-   def update(self, gameObjects, keys):
+   def update(self, gameObjects, keys, nearestLevel):
       if(self.graphic):
          self.graphic.update()
       if(self.text):
          self.text.update()
       if(self.lift):
-         self.lift.update(keys)
+         self.lift.update(keys, nearestLevel)
 
    def getRect(self):
       r = pygame.Rect(self.x, self.y, 
@@ -86,10 +86,26 @@ class Lift:
       self.shaftBottom = shaftBottom
       self.v = 0
 
-   def update(self, keys):
+   def update(self, keys, nearestLevel):     
       if self.active:
          if keyBinding("LIFT_STOP") in keys:
             self.v = 0
+            plan = nearestLevel - 32
+            if(plan == self.parent.y):
+               pass
+            elif(plan > self.parent.y):
+               delta = plan - self.parent.y
+               if(delta > constant("LIFT_STOPPING_V")):
+                  self.parent.y += constant("LIFT_STOPPING_V")
+               else:
+                  self.parent.y = plan
+            elif(plan < self.parent.y):
+               delta = self.parent.y - plan
+               if(delta > constant("LIFT_STOPPING_V")):
+                  self.parent.y -= constant("LIFT_STOPPING_V")
+               else:
+                  self.parent.y = plan     
+
          elif keyBinding("LIFT_UP") in keys:
             self.v -= constant("LIFT_SPEED")
          elif keyBinding("LIFT_DOWN") in keys:
