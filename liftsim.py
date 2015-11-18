@@ -17,12 +17,13 @@ def playGame(screen):
       level += playLevel(generateLevel(level), screen)
       
 
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+screen = pygame.display.set_mode((constant("SCREEN_WIDTH"), 
+                                  constant("SCREEN_HEIGHT")))
 
 
 while True:
    result = mainMenu(screen)
    if result == 0: playGame(screen)
    elif result == 1: settingsMenu(screen)
-   elif result == 2: sys.exit(1) # they quit
+   elif result == 2: sys.exit(1)
 

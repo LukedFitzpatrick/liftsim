@@ -39,11 +39,13 @@ def showMenu(title, optionTexts, screen, FPS=60):
    while mainloop:
       milliseconds = clock.tick(FPS) 
       
-      registerRect(MENU_BACKGROUND_COLOUR, 0, 0, 0, SCREEN_WIDTH,
-                   SCREEN_HEIGHT, 1, 0, "Background rect")
+      registerRect(constant("MENU_BACKGROUND_COLOUR"), 0, 0, 0, 
+                   constant("SCREEN_WIDTH"), constant("SCREEN_HEIGHT"), 
+                   1, 0, "Background rect")
 
       f = pygame.font.Font("graphics/font/UQ_0.ttf", 80)
-      registerText(title, f, MENU_TITLE_COLOUR, 40, 40, 1, 1, "title")
+      registerText(title, f, constant("MENU_TITLE_COLOUR"), 40, 40, 
+                   1, 1, "title")
       
       f = pygame.font.Font("graphics/font/UQ_0.ttf", 50)
       
@@ -51,9 +53,9 @@ def showMenu(title, optionTexts, screen, FPS=60):
       index = 0
       for o in optionTexts:
          if(index != selectedIndex):
-            colour = MENU_INACTIVE_COLOUR
+            colour = constant("MENU_INACTIVE_COLOUR")
          else:
-            colour = MENU_ACTIVE_COLOUR
+            colour = constant("MENU_ACTIVE_COLOUR")
 
          registerText(o,f,colour,100,
                       200+(index*yincrement), 1, 1, "menuitem")

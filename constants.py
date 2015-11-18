@@ -1,22 +1,28 @@
-LIFT_SPEED = 0.5
-LIFT_BOUNCE_FACTOR = -0.2
 
-LIFT_ACTIVE_FRAME_INDEX = 0
-LIFT_PASSIVE_FRAME_INDEX = 1
+def constant(id):
+   if id == "LIFT_SPEED":
+      return 0.5
+   elif id == "LIFT_BOUNCE_FACTOR":
+      return -0.4
+   elif id == "LIFT_ACTIVE_FRAME_INDEX":
+      return 0
+   elif id == "LIFT_PASSIVE_FRAME_INDEX":
+      return 1
+   elif id == "SCREEN_WIDTH":
+      return 480
+   elif id == "SCREEN_HEIGHT":
+      return 640
+   elif id == "MENU_BACKGROUND_COLOUR":
+      return (119, 79, 56)
+   elif id == "MENU_TITLE_COLOUR":
+      return (197, 224, 220)
+   elif id == "MENU_INACTIVE_COLOUR":
+      return (236, 229, 206)
+   elif id == "MENU_ACTIVE_COLOUR":
+      return (224, 142, 121)
+   elif id == "MAX_X_CAMERA_SHIFT":
+      return 10
+   elif id == "MAX_Y_CAMERA_SHIFT":
+      return 40
 
 
-SCREEN_WIDTH = 480
-SCREEN_HEIGHT = 640
-
-
-
-MENU_BACKGROUND_COLOUR = (119, 79, 56)
-MENU_TITLE_COLOUR = (197, 224, 220)
-MENU_INACTIVE_COLOUR = (236, 229, 206)
-MENU_ACTIVE_COLOUR = (224, 142, 121)
-
-
-
-
-MAX_X_CAMERA_SHIFT = 10
-MAX_Y_CAMERA_SHIFT = 40

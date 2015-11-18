@@ -16,7 +16,8 @@ def getLevelHeight():
 
 def generateLevel(levelNumber):
    gameObjects = []
-   setLevelDimensions(SCREEN_WIDTH*2, SCREEN_HEIGHT*2)
+   setLevelDimensions(constant("SCREEN_WIDTH")*2, 
+                      constant("SCREEN_HEIGHT")*2)
 
    # background
    bgi = pygame.image.load(os.path.join("graphics/lightbackground.png"))
@@ -59,7 +60,7 @@ def generateLevel(levelNumber):
    # the camerax/y text
    f = pygame.font.Font("graphics/font/UQ_0.ttf", 28)
    lText = Text("(x ,y)", f, (119, 79, 56), 10)
-   lTextObject = GameObject("CameraText", SCREEN_WIDTH-100, 10, 
+   lTextObject = GameObject("CameraText", constant("SCREEN_WIDTH")-100, 10, 
                             graphic=None, text=lText)
    gameObjects.append(lTextObject)
 

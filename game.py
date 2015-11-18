@@ -35,37 +35,37 @@ def changeActiveLift(lifts, increment):
    lifts[nextIndex].makeActive()
 
 def updateCamera(aLift, cameraX, cameraY):
-   newcameraY = aLift.parent.y - (SCREEN_HEIGHT/2)
+   newcameraY = aLift.parent.y - (constant("SCREEN_HEIGHT")/2)
    newcameraY = max(newcameraY, aLift.shaftTop)
-   newcameraY = min(newcameraY, aLift.shaftBottom - SCREEN_HEIGHT)
+   newcameraY = min(newcameraY, aLift.shaftBottom-constant("SCREEN_HEIGHT"))
       
-   newcameraX = aLift.parent.x - (SCREEN_WIDTH/2)
+   newcameraX = aLift.parent.x - (constant("SCREEN_WIDTH")/2)
    newcameraX = max(newcameraX, 0)
-   newcameraX = min(newcameraX, getLevelWidth()-SCREEN_WIDTH)
+   newcameraX = min(newcameraX, getLevelWidth()-constant("SCREEN_WIDTH"))
    
    if(newcameraY > cameraY):
       delta = newcameraY - cameraY
-      if delta > MAX_Y_CAMERA_SHIFT:
-         cameraY = cameraY + MAX_Y_CAMERA_SHIFT
+      if delta > constant("MAX_Y_CAMERA_SHIFT"):
+         cameraY = cameraY + constant("MAX_Y_CAMERA_SHIFT")
       else:
          cameraY = newcameraY
    elif(newcameraY < cameraY):
       delta = cameraY - newcameraY
-      if delta > MAX_Y_CAMERA_SHIFT:
-         cameraY = cameraY - MAX_Y_CAMERA_SHIFT
+      if delta > constant("MAX_Y_CAMERA_SHIFT"):
+         cameraY = cameraY - constant("MAX_Y_CAMERA_SHIFT")
       else:
          cameraY = newcameraY
 
    if(newcameraX > cameraX):
       delta = newcameraX - cameraX
-      if delta > MAX_X_CAMERA_SHIFT:
-         cameraX = cameraX + MAX_X_CAMERA_SHIFT
+      if delta > constant("MAX_X_CAMERA_SHIFT"):
+         cameraX = cameraX + constant("MAX_X_CAMERA_SHIFT")
       else:
          cameraX = newcameraX
    elif(newcameraX < cameraX):
       delta = cameraX - newcameraX
-      if delta > MAX_X_CAMERA_SHIFT:
-         cameraX = cameraX - MAX_X_CAMERA_SHIFT
+      if delta > constant("MAX_X_CAMERA_SHIFT"):
+         cameraX = cameraX - constant("MAX_X_CAMERA_SHIFT")
       else:
          cameraX = newcameraX
 

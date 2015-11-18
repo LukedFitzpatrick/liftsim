@@ -81,7 +81,7 @@ class Text:
 
 
 class Lift:
-   def __init__(self, shaftTop=0, shaftBottom=SCREEN_HEIGHT):
+   def __init__(self, shaftTop=0, shaftBottom=constant("SCREEN_HEIGHT")):
       self.shaftTop = shaftTop
       self.shaftBottom = shaftBottom
       self.v = 0
@@ -91,30 +91,31 @@ class Lift:
          if keyBinding("LIFT_STOP") in keys:
             self.v = 0
          elif keyBinding("LIFT_UP") in keys:
-            self.v -= LIFT_SPEED
+            self.v -= constant("LIFT_SPEED")
          elif keyBinding("LIFT_DOWN") in keys:
-            self.v += LIFT_SPEED
+            self.v += constant("LIFT_SPEED")
          
       self.parent.y += self.v
 
       # top collisions
       self.parent.y = max(self.shaftTop, self.parent.y)
-      if(self.parent.y == self.shaftTop): self.v *= LIFT_BOUNCE_FACTOR
+      if(self.parent.y == self.shaftTop): 
+         self.v *= constant("LIFT_BOUNCE_FACTOR")
       
       # bottom collisions
       self.parent.y = min(self.shaftBottom-self.parent.graphic.height,
                           self.parent.y)
       if(self.parent.y == self.shaftBottom-self.parent.graphic.height):
-         self.v *= LIFT_BOUNCE_FACTOR
+         self.v *= constant("LIFT_BOUNCE_FACTOR")
 
 
    def makeActive(self):
       self.active = True
-      self.parent.graphic.jumpToFrame(LIFT_ACTIVE_FRAME_INDEX)
+      self.parent.graphic.jumpToFrame(constant("LIFT_ACTIVE_FRAME_INDEX"))
 
    def makeInactive(self):
       self.active = False
-      self.parent.graphic.jumpToFrame(LIFT_PASSIVE_FRAME_INDEX)
+      self.parent.graphic.jumpToFrame(constant("LIFT_PASSIVE_FRAME_INDEX"))
 
 
          
