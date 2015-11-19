@@ -1,9 +1,11 @@
 from graphicsHandler import *
 from keybindings import *
 from constants import *
+import random
 
 class GameObject:
-   def __init__(self, debugName, x, y, graphic=None, text=None, lift=None):
+   def __init__(self, debugName, x, y, graphic=None, text=None, 
+                lift=None, person=None):
       self.debugName = debugName
       self.x = x
       self.y = y
@@ -22,14 +24,22 @@ class GameObject:
          self.lift.parent = self
       else:
          self.lift = None
+      if(person):
+         self.person = person
+         self.person.parent = self
+      else:
+         self.person = None
 
-   def update(self, gameObjects, keys, nearestLevel):
+   def update(self, gameObjects, lifts, keys, nearestLevel, 
+              nearestLevelIndex):
       if(self.graphic):
          self.graphic.update()
       if(self.text):
          self.text.update()
       if(self.lift):
-         self.lift.update(keys, nearestLevel)
+         self.lift.update(keys, nearestLevel, nearestLevelIndex)
+      if(self.person):
+         self.person.update(lifts)
 
    def getRect(self):
       r = pygame.Rect(self.x, self.y, 
@@ -68,16 +78,18 @@ class Graphic:
 
       
 class Text:
-   def __init__(self, text, font, colour, priority):
+   def __init__(self, text, font, colour, priority, xoffset=0, yoffset=0):
       self.text = text
       self.font = font
       self.colour = colour
       self.priority = priority
+      self.xoffset = xoffset
+      self.yoffset = yoffset
    
    def update(self):
       registerText(self.text, self.font, self.colour,
-                   self.parent.x, self.parent.y, 1, self.priority,
-                   self.parent.debugName)
+                   self.parent.x+self.xoffset, self.parent.y+self.yoffset, 
+                   1, self.priority, self.parent.debugName)
 
 
 class Lift:
@@ -85,26 +97,33 @@ class Lift:
       self.shaftTop = shaftTop
       self.shaftBottom = shaftBottom
       self.v = 0
+      self.floor = 0
+      self.stopped = False
 
-   def update(self, keys, nearestLevel):     
+
+   def update(self, keys, nearestLevel, nearestLevelIndex):     
+      self.floor = nearestLevelIndex
+      
       if self.active:
          if keyBinding("LIFT_STOP") in keys:
             self.v = 0
             plan = nearestLevel - 32
-            if(plan == self.parent.y):
-               pass
-            elif(plan > self.parent.y):
+            
+            if(plan > self.parent.y):
                delta = plan - self.parent.y
                if(delta > constant("LIFT_STOPPING_V")):
                   self.parent.y += constant("LIFT_STOPPING_V")
                else:
                   self.parent.y = plan
+                  self.stop()
+                  
             elif(plan < self.parent.y):
                delta = self.parent.y - plan
                if(delta > constant("LIFT_STOPPING_V")):
                   self.parent.y -= constant("LIFT_STOPPING_V")
                else:
-                  self.parent.y = plan     
+                  self.parent.y = plan
+                  self.stop()
 
          elif keyBinding("LIFT_UP") in keys:
             self.v -= constant("LIFT_SPEED")
@@ -112,6 +131,8 @@ class Lift:
             self.v += constant("LIFT_SPEED")
          
       self.parent.y += self.v
+      if self.v != 0:
+         self.unstop()
 
       # top collisions
       self.parent.y = max(self.shaftTop, self.parent.y)
@@ -127,11 +148,101 @@ class Lift:
 
    def makeActive(self):
       self.active = True
-      self.parent.graphic.jumpToFrame(constant("LIFT_ACTIVE_FRAME_INDEX"))
+      if not self.stopped:
+         self.parent.graphic.jumpToFrame(constant("LIFT_ACTIVE_FRAME_INDEX"))
 
    def makeInactive(self):
       self.active = False
-      self.parent.graphic.jumpToFrame(constant("LIFT_PASSIVE_FRAME_INDEX"))
+      if not self.stopped:
+         self.parent.graphic.jumpToFrame(constant("LIFT_PASSIVE_FRAME_INDEX"))
+
+   def stop(self):
+      self.stopped = True
+      self.parent.graphic.jumpToFrame(constant("LIFT_STOPPED_FRAME_INDEX"))
+
+   def unstop(self):
+      self.stopped = False
+      if self.active:
+         self.makeActive()
+      else:
+         self.makeInactive()
 
 
+
+class Person:
+   def __init__(self, leftMostX, rightMostX, minFloor, maxFloor, currFloor):
+      self.state = pstate("WANDERING")
+      self.wanderDir = "RIGHT"
+      self.leftMostX = leftMostX
+      self.rightMostX = rightMostX
+      self.floor = currFloor
+      self.minFloor = minFloor
+      self.maxFloor = maxFloor
+      self.lift = None
+
+
+   def update(self, lifts):
+      # sometimes we need to update the state
+      if self.state == pstate("WANDERING"):
+         if(random.randrange(1, 500) == 20):
+            self.pick()
+            self.state = pstate("WAITING")
+      
+      if self.state == pstate("WANDERING"):
+         self.wander()
+
+      elif self.state == pstate("WAITING"):
+         # check if the elevator is here
+         for l in lifts:
+            if l.stopped and l.floor == self.floor:
+               if l.parent.x > self.parent.x:
+                  self.parent.x += constant("PERSON_WALK_SPEED")
+               elif l.parent.x < self.parent.x:
+                  self.parent.x -= constant("PERSON_WALK_SPEED")
+               else:
+                  # we're exactly at the lift
+                  self.lift = l
+                  self.state = pstate("RIDING")
+
+      elif self.state == pstate("RIDING"):
+         self.parent.y = self.lift.parent.y
+         print "(" + str(self.desiredFloor) + ", " + str(self.lift.floor)
          
+         if (self.lift.floor==self.desiredFloor and self.lift.stopped):
+            self.floor = self.desiredFloor
+            self.desiredFloor = 0
+            self.lift = None
+            self.state = pstate("WANDERING")
+            self.parent.text.text = ""
+            
+
+   def wander(self):
+      # every now and then switch sides
+      if random.randrange(1, 100) == 5:
+         if self.wanderDir == "LEFT":
+            self.wanderDir = "RIGHT"
+         else:
+            self.wanderDir = "LEFT"
+
+      if random.randrange(1, 3) == 2:
+         if self.wanderDir == "LEFT":
+            self.parent.x -= constant("PERSON_WALK_SPEED")
+         else:
+            self.parent.x += constant("PERSON_WALK_SPEED")
+         
+         self.parent.x = max(self.leftMostX, self.parent.x)
+         self.parent.x = min(self.rightMostX-self.parent.graphic.width, 
+                             self.parent.x) 
+            
+      # sometimes just stand still
+      else:
+         pass
+      
+   
+   def pick(self):
+      self.desiredFloor = random.randrange(self.minFloor, self.maxFloor)
+      while self.desiredFloor == self.floor:
+         self.desiredFloor = random.randrange(self.minFloor, self.maxFloor)
+
+
+      self.parent.text.text = str(self.desiredFloor)

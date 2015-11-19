@@ -38,7 +38,7 @@ class GraphicsObject:
       elif self.type == "text":
          # the rep is a TextWrapper
          label = self.rep.thefont.render(self.rep.text, False, self.rep.colour)
-         screen.blit(label, (self.rep.left, self.rep.top))
+         screen.blit(label, (self.rep.left-camerax, self.rep.top-cameray))
          
 
 class TextWrapper:

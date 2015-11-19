@@ -2,7 +2,7 @@ from gameObject import *
 import pygame
 from graphicsHandler import *
 from bisect import bisect_left
-
+import random
 
 
 def setLevelDimensions(width, height):
@@ -15,7 +15,6 @@ def setLevelDimensions(width, height):
 def setFloorHeights(heights):
    global floorHeights
    floorHeights = heights
-   print floorHeights
 
 def getFloorHeights():
    return floorHeights
@@ -55,8 +54,9 @@ def generateLevel(levelNumber):
    # make the lifts
    liftpi = pygame.image.load(os.path.join("graphics/liftpassive.png"))
    liftai = pygame.image.load(os.path.join("graphics/liftactive.png"))
+   liftsi = pygame.image.load(os.path.join("graphics/liftstopped.png"))
    for i in range(0, 10):
-      liftgraphic = Graphic([liftai, liftpi], [1, 1], 5)
+      liftgraphic = Graphic([liftai, liftpi, liftsi], [1, 1, 1], 5)
       liftlift = Lift(0, getLevelHeight())
       liftobject = GameObject("Lift", i*100+10, getLevelHeight()-32,
                               liftgraphic, None,liftlift)
@@ -66,35 +66,37 @@ def generateLevel(levelNumber):
    # the floor markers
    markeri = pygame.image.load(os.path.join("graphics/levelmarker.png"))
    floorHeight = 128
-   for i in range(0, getLevelHeight()/floorHeight):
+   numFloors = getLevelHeight()/floorHeight
+   for i in range(1, numFloors):
       markerg = Graphic([markeri], [1], 1)
       markerObject = GameObject("Level Marker", 0, i*floorHeight, markerg)
       floors.append(i*floorHeight)
       gameObjects.append(markerObject)
+      
+      # chuck some people on!
+      numPeople = random.randrange(3, 5)
+      for j in range(0, numPeople):
+         type = random.randrange(1, 5)
+         personi = pygame.image.load(
+            os.path.join("graphics/person" + str(type)) + ".png")
+         persong = Graphic([personi], [1], [2])
+         x = random.randrange(0, getLevelWidth()-17)
+         personPerson = Person(0, getLevelWidth(), 0, numFloors, 
+                               numFloors-i)
+ 
+         f = pygame.font.Font("graphics/font/UQ_0.ttf", 20)
+         pText = Text("", f, (119, 79, 56), 10, -5, -5)
+        
+         personObject = GameObject("Person", x, (i*floorHeight)-32, 
+                                   graphic=persong, text=pText,
+                                   person=personPerson)
+
+         gameObjects.append(personObject)
 
    setFloorHeights(floors)
 
-   # vertical markers
-   markeri = pygame.image.load(os.path.join("graphics/verticalmarker.png"))
-   spacing = 64
-   for i in range(0, getLevelWidth()/spacing):
-      markerg = Graphic([markeri], [1], 1)
-      markerObject = GameObject("Vertical Marker", i*spacing, 0, markerg)
-      gameObjects.append(markerObject)
 
-   # the level text
-   f = pygame.font.Font("graphics/font/UQ_0.ttf", 20)
-   lText = Text("Level " + str(levelNumber), f, (119, 79, 56), 10)
-   lTextObject = GameObject("Level Text", 10, 10, graphic=None, text=lText)
-   gameObjects.append(lTextObject)
-   
-   # the camerax/y text
-   f = pygame.font.Font("graphics/font/UQ_0.ttf", 28)
-   lText = Text("(x ,y)", f, (119, 79, 56), 10)
-   lTextObject = GameObject("CameraText", constant("SCREEN_WIDTH")-100, 10, 
-                            graphic=None, text=lText)
-   gameObjects.append(lTextObject)
-
+  
 
    # the current floor text
    f = pygame.font.Font("graphics/font/UQ_0.ttf", 20)

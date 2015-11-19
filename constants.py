@@ -8,6 +8,8 @@ def constant(id):
       return 0
    elif id == "LIFT_PASSIVE_FRAME_INDEX":
       return 1
+   elif id == "LIFT_STOPPED_FRAME_INDEX":
+      return 2
    elif id == "SCREEN_WIDTH":
       return 480
    elif id == "SCREEN_HEIGHT":
@@ -26,5 +28,13 @@ def constant(id):
       return 40
    elif id == "LIFT_STOPPING_V":
       return 3
+   elif id == "PERSON_WALK_SPEED":
+      return 1
 
-
+def pstate(id):
+   if id == "WANDERING":
+      return 0
+   elif id == "WAITING":
+      return 1
+   elif id == "RIDING":
+      return 2
