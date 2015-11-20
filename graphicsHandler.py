@@ -1,5 +1,6 @@
 # Abstract data object and type to handle what gets shown on the screen
 from logging import *
+from constants import *
 import pygame
 
 currentGraphicsObjects = []
@@ -20,16 +21,18 @@ class GraphicsObject:
       self.currentFrameLifeSpan = frameLifeSpan
       self.priority = priority
       self.debugName = debugName
-      self.immovable = False
+      self.immovable = immovable
 
-   def show(self, screen, camerax, cameray):
-      if self.immovable:
-         camerax = 0
-         cameray = 0
+   def show(self, screen, camerax, cameray):   
 
       if self.type == "image":
          # in this case, rep is a straight image
-         screen.blit(self.rep, (self.screenx-camerax, self.screeny-cameray))
+         if self.immovable:
+            screen.blit(self.rep, (self.screenx, self.screeny))
+         
+         elif (self.screenx-camerax > -self.rep.get_width() and (self.screenx-camerax) < constant("SCREEN_WIDTH")+self.rep.get_width() and
+               self.screeny-cameray > -self.rep.get_height() and (self.screeny-cameray) < constant("SCREEN_HEIGHT")+self.rep.get_height()):
+            screen.blit(self.rep, (self.screenx-camerax, self.screeny-cameray))
       
       # todo add camera to these types, for now assume they're immovable
       elif self.type == "rect":
@@ -58,10 +61,10 @@ class RectangleWrapper:
                            
 # put an image i.e. .png into the queue of things to be shown
 def registerImage(image, screenx, screeny,frameLifeSpan, 
-                           priority=1, debugName=""):
+                           priority=1, debugName="", immovable=False):
    
    g = GraphicsObject("image", image, screenx, screeny, 
-                      frameLifeSpan, priority, debugName)
+                      frameLifeSpan, priority, debugName, immovable)
    global currentGraphicsObjects
    if not g in currentGraphicsObjects:
       currentGraphicsObjects.append(g)

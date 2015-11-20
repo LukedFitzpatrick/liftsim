@@ -2,6 +2,7 @@ from graphicsHandler import *
 from keybindings import *
 from constants import *
 import random
+import math
 
 class GameObject:
    def __init__(self, debugName, x, y, graphic=None, text=None, 
@@ -48,7 +49,7 @@ class GameObject:
 
       
 class Graphic:
-   def __init__(self, frames, frameLifeSpans, priority, parent=None):
+   def __init__(self, frames, frameLifeSpans, priority, parent=None, immovable=False):
       self.frames = frames
       self.parent = parent
       self.frameLifeSpans = frameLifeSpans
@@ -57,6 +58,7 @@ class Graphic:
       self.width = self.frames[self.currentFrameIndex].get_width()
       self.height = self.frames[self.currentFrameIndex].get_height()
       self.animating = False
+      self.immovable = immovable
 
    def update(self):
       # possibly update the animation state here etc
@@ -67,7 +69,7 @@ class Graphic:
       registerImage(self.frames[self.currentFrameIndex], 
                     self.parent.x, self.parent.y, 
                     self.frameLifeSpans[self.currentFrameIndex],
-                    self.priority, self.parent.debugName)
+                    self.priority, self.parent.debugName, self.immovable)
       self.width = self.frames[self.currentFrameIndex].get_width()
       self.height = self.frames[self.currentFrameIndex].get_height()
 
@@ -124,6 +126,8 @@ class Lift:
                else:
                   self.parent.y = plan
                   self.stop()
+            else:
+               self.stop()
 
          elif keyBinding("LIFT_UP") in keys:
             self.v -= constant("LIFT_SPEED")
@@ -193,20 +197,25 @@ class Person:
 
       elif self.state == pstate("WAITING"):
          # check if the elevator is here
+         minDistance = 99999999
+         deltax = 0
+
          for l in lifts:
-            if l.stopped and l.floor == self.floor:
+            if l.stopped and l.floor == self.floor and math.fabs(l.parent.x - self.parent.x) < minDistance:
+               minDistance = math.fabs(l.parent.x - self.parent.x)
                if l.parent.x > self.parent.x:
-                  self.parent.x += constant("PERSON_WALK_SPEED")
+                  deltax = constant("PERSON_WALK_SPEED")
                elif l.parent.x < self.parent.x:
-                  self.parent.x -= constant("PERSON_WALK_SPEED")
+                  deltax = -constant("PERSON_WALK_SPEED")
                else:
                   # we're exactly at the lift
                   self.lift = l
                   self.state = pstate("RIDING")
 
+         self.parent.x += deltax
+
       elif self.state == pstate("RIDING"):
          self.parent.y = self.lift.parent.y
-         print "(" + str(self.desiredFloor) + ", " + str(self.lift.floor)
          
          if (self.lift.floor==self.desiredFloor and self.lift.stopped):
             self.floor = self.desiredFloor

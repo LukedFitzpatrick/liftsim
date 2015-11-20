@@ -47,7 +47,7 @@ def generateLevel(levelNumber):
 
    # background
    bgi = pygame.image.load(os.path.join("graphics/lightbackground.png"))
-   bggraphic = Graphic([bgi], [1], 0)
+   bggraphic = Graphic([bgi], [1], 0, immovable = True)
    bgobject = GameObject("Background", 0, 0, bggraphic)
    gameObjects.append(bgobject)
 
@@ -66,32 +66,32 @@ def generateLevel(levelNumber):
    # the floor markers
    markeri = pygame.image.load(os.path.join("graphics/levelmarker.png"))
    floorHeight = 128
-   numFloors = getLevelHeight()/floorHeight
+   numFloors = (getLevelHeight()/floorHeight) + 1
    for i in range(1, numFloors):
       markerg = Graphic([markeri], [1], 1)
       markerObject = GameObject("Level Marker", 0, i*floorHeight, markerg)
       floors.append(i*floorHeight)
       gameObjects.append(markerObject)
       
-      # chuck some people on!
-      numPeople = random.randrange(3, 5)
-      for j in range(0, numPeople):
-         type = random.randrange(1, 5)
-         personi = pygame.image.load(
-            os.path.join("graphics/person" + str(type)) + ".png")
-         persong = Graphic([personi], [1], [2])
-         x = random.randrange(0, getLevelWidth()-17)
-         personPerson = Person(0, getLevelWidth(), 0, numFloors, 
-                               numFloors-i)
- 
-         f = pygame.font.Font("graphics/font/UQ_0.ttf", 20)
-         pText = Text("", f, (119, 79, 56), 10, -5, -5)
-        
-         personObject = GameObject("Person", x, (i*floorHeight)-32, 
-                                   graphic=persong, text=pText,
-                                   person=personPerson)
+   # chuck some people on!
+   numPeople = random.randrange(20, 30)
+   for j in range(0, numPeople):
+      type = random.randrange(1, 5)
+      personi = pygame.image.load(
+         os.path.join("graphics/person" + str(type)) + ".png")
+      persong = Graphic([personi], [1], [2])
+      x = random.randrange(0, getLevelWidth()-17)
+      personPerson = Person(0, getLevelWidth(), 1, numFloors, 
+                            numFloors-i)
+         
+      f = pygame.font.Font("graphics/font/UQ_0.ttf", 20)
+      pText = Text("", f, (119, 79, 56), 10, -5, -5)
+         
+      personObject = GameObject("Person", x, getLevelHeight()-32, 
+                                graphic=persong, text=pText,
+                                person=personPerson)
 
-         gameObjects.append(personObject)
+      gameObjects.append(personObject)
 
    setFloorHeights(floors)
 
