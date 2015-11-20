@@ -5,7 +5,7 @@ import random
 import math
 
 class GameObject:
-   def __init__(self, debugName, x, y, graphic=None, text=None, 
+   def __init__(self, debugName, x, y, graphic=None, text=None, text2=None,
                 lift=None, person=None):
       self.debugName = debugName
       self.x = x
@@ -20,6 +20,11 @@ class GameObject:
          self.text.parent = self
       else:
          self.text = None
+      if(text2):
+         self.text2 = text2
+         self.text2.parent = self
+      else:
+         self.text2 = None
       if(lift):
          self.lift = lift
          self.lift.parent = self
@@ -37,6 +42,8 @@ class GameObject:
          self.graphic.update()
       if(self.text):
          self.text.update()
+      if(self.text2):
+         self.text2.update()
       if(self.lift):
          self.lift.update(keys, nearestLevel, nearestLevelIndex)
       if(self.person):
@@ -101,6 +108,7 @@ class Lift:
       self.v = 0
       self.floor = 0
       self.stopped = False
+      self.full = False
 
 
    def update(self, keys, nearestLevel, nearestLevelIndex):     
@@ -183,6 +191,7 @@ class Person:
       self.minFloor = minFloor
       self.maxFloor = maxFloor
       self.lift = None
+      self.wiggleAmount = 1
 
 
    def update(self, lifts):
@@ -196,12 +205,30 @@ class Person:
          self.wander()
 
       elif self.state == pstate("WAITING"):
+         self.waitTime += 1
+         if self.waitTime%1000 == 0:
+            if self.wiggleAmount > 0:
+               self.wiggleAmount += 1
+               self.wiggleAmount = min(self.wiggleAmount, 
+                                       constant("MAX_WIGGLE"))
+            else:
+               self.wiggleAmount -= 1
+               self.wiggleAmount = max(self.wiggleAmount,
+                                       -constant("MAX_WIGGLE"))
+            
+            
+
+         self.wiggleAmount = -1*self.wiggleAmount
+         self.parent.text.xoffset += self.wiggleAmount
+         self.parent.text.yoffset += self.wiggleAmount
+
          # check if the elevator is here
          minDistance = 99999999
          deltax = 0
 
          for l in lifts:
-            if l.stopped and l.floor == self.floor and math.fabs(l.parent.x - self.parent.x) < minDistance:
+            if (l.stopped and not l.full and l.floor == self.floor 
+            and math.fabs(l.parent.x - self.parent.x) < minDistance):
                minDistance = math.fabs(l.parent.x - self.parent.x)
                if l.parent.x > self.parent.x:
                   deltax = constant("PERSON_WALK_SPEED")
@@ -210,6 +237,7 @@ class Person:
                else:
                   # we're exactly at the lift
                   self.lift = l
+                  l.full = True
                   self.state = pstate("RIDING")
 
          self.parent.x += deltax
@@ -218,6 +246,7 @@ class Person:
          self.parent.y = self.lift.parent.y
          
          if (self.lift.floor==self.desiredFloor and self.lift.stopped):
+            self.lift.full = False
             self.floor = self.desiredFloor
             self.desiredFloor = 0
             self.lift = None
@@ -253,5 +282,6 @@ class Person:
       while self.desiredFloor == self.floor:
          self.desiredFloor = random.randrange(self.minFloor, self.maxFloor)
 
-
       self.parent.text.text = str(self.desiredFloor)
+      self.waitTime = 0
+      

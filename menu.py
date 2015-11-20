@@ -43,11 +43,11 @@ def showMenu(title, optionTexts, screen, FPS=60):
                    constant("SCREEN_WIDTH"), constant("SCREEN_HEIGHT"), 
                    1, 0, "Background rect")
 
-      f = pygame.font.Font("graphics/font/UQ_0.ttf", 80)
-      registerText(title, f, constant("MENU_TITLE_COLOUR"), 40, 40, 
+      f = pygame.font.Font("graphics/font/yoster.ttf", 60)
+      registerText(title, f, constant("MENU_TITLE_COLOUR"), 20, 40, 
                    1, 1, "title")
       
-      f = pygame.font.Font("graphics/font/UQ_0.ttf", 50)
+      f = pygame.font.Font("graphics/font/yoster.ttf", 50)
       
       yincrement = 80
       index = 0

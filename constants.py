@@ -30,6 +30,8 @@ def constant(id):
       return 3
    elif id == "PERSON_WALK_SPEED":
       return 1
+   elif id == "MAX_WIGGLE":
+      return 8
 
 def pstate(id):
    if id == "WANDERING":

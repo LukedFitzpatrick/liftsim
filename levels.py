@@ -59,7 +59,7 @@ def generateLevel(levelNumber):
       liftgraphic = Graphic([liftai, liftpi, liftsi], [1, 1, 1], 5)
       liftlift = Lift(0, getLevelHeight())
       liftobject = GameObject("Lift", i*100+10, getLevelHeight()-32,
-                              liftgraphic, None,liftlift)
+                              graphic=liftgraphic, lift=liftlift)
       gameObjects.append(liftobject)
    
    floors = []
@@ -69,7 +69,8 @@ def generateLevel(levelNumber):
    numFloors = (getLevelHeight()/floorHeight) + 1
    for i in range(1, numFloors):
       markerg = Graphic([markeri], [1], 1)
-      markerObject = GameObject("Level Marker", 0, i*floorHeight, markerg)
+      markerObject = GameObject("Level Marker", 0, i*floorHeight, 
+                                graphic=markerg)
       floors.append(i*floorHeight)
       gameObjects.append(markerObject)
       
@@ -84,9 +85,10 @@ def generateLevel(levelNumber):
       personPerson = Person(0, getLevelWidth(), 1, numFloors, 
                             numFloors-i)
          
-      f = pygame.font.Font("graphics/font/UQ_0.ttf", 20)
-      pText = Text("", f, (119, 79, 56), 10, -5, -5)
-         
+      f = pygame.font.Font("graphics/font/joystix.ttf", 13)
+      pText = Text("", f, (119, 79, 56), 10, 2, -15)
+
+
       personObject = GameObject("Person", x, getLevelHeight()-32, 
                                 graphic=persong, text=pText,
                                 person=personPerson)
@@ -95,8 +97,7 @@ def generateLevel(levelNumber):
 
    setFloorHeights(floors)
 
-
-  
+ 
 
    # the current floor text
    f = pygame.font.Font("graphics/font/UQ_0.ttf", 20)
