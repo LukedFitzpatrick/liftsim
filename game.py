@@ -127,7 +127,7 @@ def playLevel(gameObjects, screen, FPS=60):
       
       (cameraX, cameraY) = updateCamera(aLift, cameraX, cameraY)
       (nearestFloor, index) = getClosestFloorHeight(aLift.parent.y)
-
+      
       floorTextObject = findObjectByName("FloorText", gameObjects)
       floorTextObject.text.text = "Floor " + str(index)
       floorTextObject.y = nearestFloor  + 4

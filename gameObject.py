@@ -109,6 +109,8 @@ class Lift:
       self.floor = 0
       self.stopped = False
       self.full = False
+      self.movingeffect = pygame.mixer.Sound("sound/elevatormoving.wav")
+
 
 
    def update(self, keys, nearestLevel, nearestLevelIndex):     
@@ -138,13 +140,16 @@ class Lift:
                self.stop()
 
          elif keyBinding("LIFT_UP") in keys:
-            self.v -= constant("LIFT_SPEED")
+            self.v = -4#-= constant("LIFT_SPEED")
          elif keyBinding("LIFT_DOWN") in keys:
-            self.v += constant("LIFT_SPEED")
+            self.v = 4#+= constant("LIFT_SPEED")
          
       self.parent.y += self.v
       if self.v != 0:
+         self.movingeffect.play()
          self.unstop()
+      else:
+         self.movingeffect.stop()
 
       # top collisions
       self.parent.y = max(self.shaftTop, self.parent.y)

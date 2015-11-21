@@ -2,12 +2,16 @@ from logging import *
 from graphicsHandler import *
 from keybindings import *
 from constants import *
+import pygame
 import sys
 
 def mainMenu(screen, FPS=60):
+   pygame.mixer.music.load("sound/titlescreenmp.mp3")
+   pygame.mixer.music.play(0)
    clearAllGraphics(screen)
    options = ["Play", "Settings", "Exit"]
    result = showMenu("Lift Operator", options, screen)
+   pygame.mixer.music.stop()
    return result
 
 

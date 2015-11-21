@@ -7,6 +7,8 @@ from constants import *
 from levels import *
 
 cleanAllLogs()
+
+pygame.mixer.init(frequency=48000)
 pygame.init()
 
 
