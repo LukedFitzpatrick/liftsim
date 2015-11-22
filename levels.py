@@ -4,46 +4,71 @@ from graphicsHandler import *
 import random
 
 
-def setLevelDimensions(width, height):
-   global levelWidth
-   levelWidth = width
-   global levelHeight
-   levelHeight = height
+class Level:
+   def __init__(self, gameObjects, floors, width, height):
+      self.gameObjects = gameObjects
+      self.floors = floors
+      self.width = width
+      self.height = height
+
+   def getClosestFloorHeight(self, y):
+      minDistance = self.height  + 100
+      
+      for f in self.floors:
+         delta = math.fabs(y - f)
+         if delta < minDistance:
+            minDistance = delta
+            floorHeight = f
+            index = self.floors.index(f)
+
+      return (floorHeight, index)
+
+   def findLifts(self):
+      lifts = []
+      for o in self.gameObjects:
+         if o.lift:
+            lifts.append(o.lift)
+      return lifts
 
 
-def setFloorHeights(heights):
-   global floorHeights
-   floorHeights = heights
+   def findActiveLift(self):
+      for o in self.findLifts():
+         if(o.active): return o
 
-def getFloorHeights():
-   return floorHeights
+   def prepareLifts(self):
+      lifts = self.findLifts()
+      for l in lifts:
+         l.makeInactive()
+      
+      # but make one active
+      lifts[0].makeActive()
 
-def getClosestFloorHeight(y):
-   minDistance = getLevelHeight() + 100
+   def changeActiveLift(self, increment):
+      lifts = self.findLifts()
+      for i in range(0, len(lifts)):
+         if(lifts[i].active):
+            activeIndex = i
 
-   for f in floorHeights:
-      delta = math.fabs(y - f)
-      if delta < minDistance:
-         minDistance = delta
-         floorHeight = f
-         index = floorHeights.index(f)
+      nextIndex = (activeIndex + increment) % len(lifts)
+      lifts[activeIndex].makeInactive()
+      lifts[nextIndex].makeActive()
 
-   return (floorHeight, index)
-         
-   
+   def findObjectByName(self, name):
+      for o in self.gameObjects:
+         if o.debugName == name:
+            return o
 
-def getLevelWidth():
-   return levelWidth
 
-def getLevelHeight():
-   return levelHeight
+
 
 def generateLevel(levelNumber):
    gameObjects = []
-   
+   level = Level([], [], 0, 0)
+
    if levelNumber == 1:
-      setLevelDimensions(constant("SCREEN_WIDTH"), 
-                      constant("SCREEN_HEIGHT"))
+      
+      level.width = constant("SCREEN_WIDTH")
+      level.height = constant("SCREEN_HEIGHT")
 
       # background
       bgi = pygame.image.load(os.path.join("graphics/lightbackground.png"))
@@ -66,8 +91,8 @@ def generateLevel(levelNumber):
 
       for x in [120, 300]:
          liftgraphic = Graphic([liftai, liftpi, liftsi], [1, 1, 1], 5)
-         liftlift = Lift(0, getLevelHeight())
-         liftobject = GameObject("Lift", x, getLevelHeight()-32,
+         liftlift = Lift(0, level.height)
+         liftobject = GameObject("Lift", x, level.height-32,
                                  graphic=liftgraphic, lift=liftlift)
          gameObjects.append(liftobject)
    
@@ -75,24 +100,24 @@ def generateLevel(levelNumber):
 
       floors = [640, 444, 305, 166, 42]
       numFloors = 5
-      setFloorHeights(floors)
+      level.floors = floors
 
       # chuck some people on!
-      numPeople = random.randrange(10, 20)
+      numPeople = 10
       for j in range(0, numPeople):
          type = random.randrange(1, 5)
          personi = pygame.image.load(
             os.path.join("graphics/person" + str(type)) + ".png")
          persong = Graphic([personi], [1], [2])
-         x = random.randrange(0, getLevelWidth()-17)
-         personPerson = Person(0, getLevelWidth(), 1, numFloors, 
+         x = random.randrange(0, level.width-17)
+         personPerson = Person(0, level.width, 1, numFloors, 
                                0)
       
          f = pygame.font.Font("graphics/font/joystix.ttf", 13)
          pText = Text("", f, (119, 79, 56), 10, 2, -15)
 
 
-         personObject = GameObject("Person", x, getLevelHeight()-32, 
+         personObject = GameObject("Person", x, level.height-32, 
                                    graphic=persong, text=pText,
                                    person=personPerson)
 
@@ -107,4 +132,7 @@ def generateLevel(levelNumber):
                                   text=fText)
          gameObjects.append(fTextObject)
 
-   return gameObjects
+   level.gameObjects = gameObjects
+   return level
+
+   

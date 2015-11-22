@@ -36,8 +36,7 @@ class GameObject:
       else:
          self.person = None
 
-   def update(self, gameObjects, lifts, keys, nearestLevel, 
-              nearestLevelIndex):
+   def update(self, level, keys):
       if(self.graphic):
          self.graphic.update()
       if(self.text):
@@ -45,8 +44,10 @@ class GameObject:
       if(self.text2):
          self.text2.update()
       if(self.lift):
-         self.lift.update(keys, nearestLevel, nearestLevelIndex)
+         (floor, index) = level.getClosestFloorHeight(self.y)
+         self.lift.update(keys, floor, index)
       if(self.person):
+         lifts = level.findLifts()
          self.person.update(lifts)
 
    def getRect(self):
@@ -146,10 +147,10 @@ class Lift:
          
       self.parent.y += self.v
       if self.v != 0:
-         self.movingeffect.play()
+         #self.movingeffect.play()
          self.unstop()
-      else:
-         self.movingeffect.stop()
+      #else:
+         #self.movingeffect.stop()
 
       # top collisions
       self.parent.y = max(self.shaftTop, self.parent.y)

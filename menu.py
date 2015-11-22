@@ -16,21 +16,26 @@ def mainMenu(screen, FPS=60):
 
 
 def settingsMenu(screen, FPS=60):
+   pygame.mixer.music.load("sound/menu.mp3")
+   pygame.mixer.music.play(-1)
    clearAllGraphics(screen)
    options = ["Keybindings", "Sound", "Back"]
    result = showMenu("Settings", options, screen)
    if result == 0: pass # do keybindings here
    elif result == 1: pass # do sound here
-
+   pygame.mixer.music.stop()
    return result
 
 def pauseMenu(screen, FPS=60):
+   pygame.mixer.music.load("sound/menu.mp3")
+   pygame.mixer.music.play(-1)
    clearAllGraphics(screen)
    options = ["Resume", "Settings", "Exit"]
    result = showMenu("Paused", options, screen)
    if result == 0: pass # just return, continue game
    elif result == 1: settingsMenu(screen, FPS)
    elif result == 2: sys.exit(1)
+   pygame.mixer.music.stop()
    return result
 
 # currently just one kind of menu, can add more later

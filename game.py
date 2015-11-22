@@ -8,42 +8,14 @@ import sys
 
 
 
-
-def findLifts(gameObjects):
-   lifts = []
-   for o in gameObjects:
-      if o.lift:
-         lifts.append(o.lift)
-   return lifts
-
-def findActiveLift(gameObjects):
-   for o in findLifts(gameObjects):
-      if(o.active): return o
-
-def prepareLifts(lifts):
-   for l in lifts:
-         l.makeInactive()
-
-   # but make one active
-   lifts[0].makeActive()
-
-def changeActiveLift(lifts, increment):
-   for i in range(0, len(lifts)):
-      if(lifts[i].active):
-         activeIndex = i
-
-   nextIndex = (activeIndex + increment) % len(lifts)
-   lifts[activeIndex].makeInactive()
-   lifts[nextIndex].makeActive()
-
-def updateCamera(aLift, cameraX, cameraY):
+def updateCamera(aLift, cameraX, cameraY, level):
    newcameraY = aLift.parent.y - (constant("SCREEN_HEIGHT")/2)
    newcameraY = max(newcameraY, aLift.shaftTop)
    newcameraY = min(newcameraY, aLift.shaftBottom-constant("SCREEN_HEIGHT"))
       
    newcameraX = aLift.parent.x - (constant("SCREEN_WIDTH")/2)
    newcameraX = max(newcameraX, 0)
-   newcameraX = min(newcameraX, getLevelWidth()-constant("SCREEN_WIDTH"))
+   newcameraX = min(newcameraX, level.width-constant("SCREEN_WIDTH"))
    
    if(newcameraY > cameraY):
       delta = newcameraY - cameraY
@@ -74,16 +46,12 @@ def updateCamera(aLift, cameraX, cameraY):
    return (cameraX, cameraY)
 
 
-def findObjectByName(name, gameObjects):
-   for o in gameObjects:
-      if o.debugName == name:
-         return o
 
-def playLevel(gameObjects, screen, FPS=60):
+def playLevel(level, screen, FPS=60):
    keysdown = []
    mainloop = True
    clock = pygame.time.Clock()
-   prepareLifts(findLifts(gameObjects))
+   level.prepareLifts()
 
    cameraX = 0
    cameraY = 0
@@ -101,7 +69,7 @@ def playLevel(gameObjects, screen, FPS=60):
             if event.key in keysdown:
                keysdown.remove(event.key)
       
-      lifts = findLifts(gameObjects)
+      lifts = level.findLifts()
       # do stuff with keysdown here
       if keyBinding("PAUSE") in keysdown:
          keysdown.remove(keyBinding("PAUSE"))
@@ -115,20 +83,22 @@ def playLevel(gameObjects, screen, FPS=60):
          return -1
       if keyBinding("NEXT_LIFT") in keysdown:
          keysdown.remove(keyBinding("NEXT_LIFT"))
-         changeActiveLift(lifts, 1)
+         level.changeActiveLift(1)
       if keyBinding("PREVIOUS_LIFT") in keysdown:
          keysdown.remove(keyBinding("PREVIOUS_LIFT"))
-         changeActiveLift(lifts, -1)
+         level.changeActiveLift(-1)
       
-      aLift = findActiveLift(gameObjects)
-      for o in gameObjects:
-         (nearestFloor, index) = getClosestFloorHeight(o.y)
-         o.update(gameObjects, lifts, keysdown, nearestFloor, index)          
+      aLift = level.findActiveLift()
+      for o in level.gameObjects:
+         (nearestFloor, index) = level.getClosestFloorHeight(o.y)
+         
+         # FIX ME
+         o.update(level, keysdown)          
       
-      (cameraX, cameraY) = updateCamera(aLift, cameraX, cameraY)
-      (nearestFloor, index) = getClosestFloorHeight(aLift.parent.y)
+      (cameraX, cameraY) = updateCamera(aLift, cameraX, cameraY, level)
+      (nearestFloor, index) = level.getClosestFloorHeight(aLift.parent.y)
       
-      floorTextObject = findObjectByName("FloorText", gameObjects)
+      floorTextObject = level.findObjectByName("FloorText")
       floorTextObject.text.text = "Floor " + str(index)
       floorTextObject.y = nearestFloor  + 4
       floorTextObject.x = aLift.parent.x + 32
