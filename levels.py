@@ -87,9 +87,7 @@ def generateLevel(levelNumber):
       liftai = pygame.image.load(os.path.join("graphics/liftactive.png"))
       liftsi = pygame.image.load(os.path.join("graphics/liftstopped.png"))
    
-
-
-      for x in [120, 300]:
+      for x in [153, 290]:
          liftgraphic = Graphic([liftai, liftpi, liftsi], [1, 1, 1], 5)
          liftlift = Lift(0, level.height)
          liftobject = GameObject("Lift", x, level.height-32,
@@ -97,9 +95,8 @@ def generateLevel(levelNumber):
          gameObjects.append(liftobject)
    
 
-
-      floors = [640, 444, 305, 166, 42]
-      numFloors = 5
+      floors = [640,517, 441, 366, 292, 215, 139, 64]
+      numFloors = len(floors)
       level.floors = floors
 
       # chuck some people on!
@@ -108,7 +105,7 @@ def generateLevel(levelNumber):
          type = random.randrange(1, 5)
          personi = pygame.image.load(
             os.path.join("graphics/person" + str(type)) + ".png")
-         persong = Graphic([personi], [1], [2])
+         persong = Graphic([personi], [1], 2)
          x = random.randrange(0, level.width-17)
          personPerson = Person(0, level.width, 1, numFloors, 
                                0)
