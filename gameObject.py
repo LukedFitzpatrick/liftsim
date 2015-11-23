@@ -57,34 +57,51 @@ class GameObject:
 
       
 class Graphic:
-   def __init__(self, frames, frameLifeSpans, priority, parent=None, immovable=False):
-      self.frames = frames
+   def __init__(self, frameSets, priority, animating=False, parent=None, immovable=False):
+      
+      self.frameSets = frameSets
       self.parent = parent
-      self.frameLifeSpans = frameLifeSpans
       self.priority = priority
-      self.currentFrameIndex = 0
-      self.width = self.frames[self.currentFrameIndex].get_width()
-      self.height = self.frames[self.currentFrameIndex].get_height()
-      self.animating = False
+      self.frameSetIndex = 0
+      self.frameIndex = 0
+      self.animating = animating
+      self.width = self.frameSets[self.frameSetIndex][self.frameIndex].get_width()
+      self.height = self.frameSets[self.frameSetIndex][self.frameIndex].get_height()
       self.immovable = immovable
+      self.flip = False
 
    def update(self):
       # possibly update the animation state here etc
       if self.animating:
-         self.currentFrameIndex += 1
-         self.currentFrameIndex = self.currentFrameIndex % len(self.frames)
+         self.frameIndex += 1
+         self.frameIndex = self.frameIndex % len(self.frameSets[self.frameSetIndex])
       
-      registerImage(self.frames[self.currentFrameIndex], 
-                    self.parent.x, self.parent.y, 
-                    self.frameLifeSpans[self.currentFrameIndex],
-                    self.priority, self.parent.debugName, self.immovable)
-      self.width = self.frames[self.currentFrameIndex].get_width()
-      self.height = self.frames[self.currentFrameIndex].get_height()
+      if self.flip:
+         i = pygame.transform.flip(self.frameSets[self.frameSetIndex][self.frameIndex], True, False)
+      else:
+         i = self.frameSets[self.frameSetIndex][self.frameIndex]
+      
+      registerImage(i, self.parent.x, self.parent.y, 
+                    1, self.priority, self.parent.debugName, self.immovable)
+      
+      self.width = self.frameSets[self.frameSetIndex][self.frameIndex].get_width()
+      self.height = self.frameSets[self.frameSetIndex][self.frameIndex].get_height()
 
+
+   # jump to a certain frame within a frame set
    def jumpToFrame(self, frame):
-      self.currentFrameIndex = frame
-      # just in case the caller did something stupid.
-      self.currentFrameIndex = self.currentFrameIndex % len(self.frames)
+      self.frameIndex = frame
+
+   def changeFrameSet(self, frameSet):
+      self.frameSetIndex = frameSet
+      self.frameIndex = 0
+
+
+   def continueOrStartFrameSet(self, frameSet):
+      if self.frameSetIndex != frameSet:
+         self.frameSetIndex = frameSet
+         self.frameIndex = 0
+
 
       
 class Text:
@@ -198,12 +215,13 @@ class Person:
       self.maxFloor = maxFloor
       self.lift = None
       self.wiggleAmount = 1
+      self.flip = False
 
 
    def update(self, lifts):
       # sometimes we need to update the state
       if self.state == pstate("WANDERING"):
-         if(random.randrange(1, 500) == 20):
+         if(random.randrange(1, 1000) == 20):
             self.pick()
             self.state = pstate("WAITING")
       
@@ -221,8 +239,7 @@ class Person:
                self.wiggleAmount -= 1
                self.wiggleAmount = max(self.wiggleAmount,
                                        -constant("MAX_WIGGLE"))
-            
-            
+                       
 
          self.wiggleAmount = -1*self.wiggleAmount
          self.parent.text.xoffset += self.wiggleAmount
@@ -230,25 +247,28 @@ class Person:
 
          # check if the elevator is here
          minDistance = 99999999
-         deltax = 0
-
+         walkingToALift = False
          for l in lifts:
             if (l.stopped and not l.full and l.floor == self.floor 
             and math.fabs(l.parent.x - self.parent.x) < minDistance):
                minDistance = math.fabs(l.parent.x - self.parent.x)
+               walkingToALift = True
                if l.parent.x > self.parent.x:
-                  deltax = constant("PERSON_WALK_SPEED")
+                  self.move("RIGHT")
                elif l.parent.x < self.parent.x:
-                  deltax = -constant("PERSON_WALK_SPEED")
+                  self.move("LEFT")
                else:
                   # we're exactly at the lift
                   self.lift = l
                   l.full = True
                   self.state = pstate("RIDING")
 
-         self.parent.x += deltax
+         if not walkingToALift:
+            self.move("STOP")
+         
 
       elif self.state == pstate("RIDING"):
+         self.move("STOP")
          self.parent.y = self.lift.parent.y
          
          if (self.lift.floor==self.desiredFloor and self.lift.stopped):
@@ -268,20 +288,33 @@ class Person:
          else:
             self.wanderDir = "LEFT"
 
-      if random.randrange(1, 3) == 2:
-         if self.wanderDir == "LEFT":
-            self.parent.x -= constant("PERSON_WALK_SPEED")
-         else:
-            self.parent.x += constant("PERSON_WALK_SPEED")
-         
-         self.parent.x = max(self.leftMostX, self.parent.x)
-         self.parent.x = min(self.rightMostX-self.parent.graphic.width, 
-                             self.parent.x) 
-            
-      # sometimes just stand still
+      if self.wanderDir == "LEFT":
+         self.move("LEFT")
       else:
-         pass
+         self.move("RIGHT")
+            
+     
+
+   def move(self, direction):
+      if direction == "STOP":
+         self.parent.graphic.continueOrStartFrameSet(0)
+         #self.parent.graphic.flip = False
+         return
       
+      else:
+         self.parent.graphic.continueOrStartFrameSet(1)
+         if direction == "RIGHT":
+            self.parent.x += constant("PERSON_WALK_SPEED")
+            self.parent.graphic.flip = False
+         else:
+            self.parent.graphic.flip = True
+            self.parent.x -= constant("PERSON_WALK_SPEED")
+
+            self.parent.x = max(self.leftMostX, self.parent.x)
+            self.parent.x = min(self.rightMostX-self.parent.graphic.width, 
+                                self.parent.x) 
+
+
    
    def pick(self):
       self.desiredFloor = random.randrange(self.minFloor, self.maxFloor)

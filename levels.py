@@ -72,13 +72,13 @@ def generateLevel(levelNumber):
 
       # background
       bgi = pygame.image.load(os.path.join("graphics/lightbackground.png"))
-      bggraphic = Graphic([bgi], [1], 0, immovable = True)
+      bggraphic = Graphic([[bgi]], 0, immovable = True)
       bgobject = GameObject("Background", 0, 0, bggraphic)
       gameObjects.append(bgobject)
 
       # level image
       leveli = pygame.image.load(os.path.join("graphics/level1/level1.png"))
-      lgraphic = Graphic([leveli], [1], 20, immovable = False)
+      lgraphic = Graphic([[leveli]], 20, immovable = False)
       lobject = GameObject("Level Picture", 0, 0, lgraphic)
       gameObjects.append(lobject)
 
@@ -87,8 +87,8 @@ def generateLevel(levelNumber):
       liftai = pygame.image.load(os.path.join("graphics/liftactive.png"))
       liftsi = pygame.image.load(os.path.join("graphics/liftstopped.png"))
    
-      for x in [306, 580]:
-         liftgraphic = Graphic([liftai, liftpi, liftsi], [1, 1, 1], 5)
+      for x in [306, 580, 900]:
+         liftgraphic = Graphic([[liftai, liftpi, liftsi]], 5)
          liftlift = Lift(0, level.height)
          liftobject = GameObject("Lift", x, level.height-64,
                                  graphic=liftgraphic, lift=liftlift)
@@ -101,10 +101,23 @@ def generateLevel(levelNumber):
 
       # chuck some people on!
       numPeople = 10
+      
+      # load the walk images
+      pwalks = []
+      for n in range(1, 9):
+         g = pygame.image.load(os.path.join("graphics/person/walk" + 
+                                            str(n) + ".png"))
+         pwalks.append(g)
+         pwalks.append(g)
+
+
+      personi = pygame.image.load(os.path.join(
+                                   "graphics/person/person.png"))
+
+
       for j in range(0, numPeople):
-         personi = pygame.image.load(
-            os.path.join("graphics/personside.png"))
-         persong = Graphic([personi], [1], 2)
+         
+         persong = Graphic([[personi], pwalks], 6, animating=True)
          x = random.randrange(0, level.width-17)
          personPerson = Person(0, level.width, 1, numFloors, 
                                0)
