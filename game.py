@@ -47,7 +47,7 @@ def updateCamera(aLift, cameraX, cameraY, level):
 
 
 
-def playLevel(level, screen, FPS=60):
+def playLevel(level, screen, FPS=30):
    keysdown = []
    mainloop = True
    clock = pygame.time.Clock()
@@ -57,7 +57,8 @@ def playLevel(level, screen, FPS=60):
    cameraY = 0
 
    while mainloop:
-      milliseconds = clock.tick(FPS) 
+      milliseconds = clock.tick(FPS)
+      #print clock.get_fps()
          
       for event in pygame.event.get():
          if event.type == pygame.QUIT:

@@ -102,9 +102,8 @@ def generateLevel(levelNumber):
       # chuck some people on!
       numPeople = 10
       for j in range(0, numPeople):
-         type = random.randrange(1, 5)
          personi = pygame.image.load(
-            os.path.join("graphics/person" + str(type)) + ".png")
+            os.path.join("graphics/personside.png"))
          persong = Graphic([personi], [1], 2)
          x = random.randrange(0, level.width-17)
          personPerson = Person(0, level.width, 1, numFloors, 
