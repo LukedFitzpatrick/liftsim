@@ -120,7 +120,7 @@ class Lift:
       if self.active:
          if keyBinding("LIFT_STOP") in keys:
             self.v = 0
-            plan = nearestLevel - 32
+            plan = nearestLevel - self.parent.graphic.height
             
             if(plan > self.parent.y):
                delta = plan - self.parent.y

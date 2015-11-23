@@ -67,8 +67,8 @@ def generateLevel(levelNumber):
 
    if levelNumber == 1:
       
-      level.width = constant("SCREEN_WIDTH")
-      level.height = constant("SCREEN_HEIGHT")
+      level.width = 960
+      level.height = 1280
 
       # background
       bgi = pygame.image.load(os.path.join("graphics/lightbackground.png"))
@@ -78,7 +78,7 @@ def generateLevel(levelNumber):
 
       # level image
       leveli = pygame.image.load(os.path.join("graphics/level1/level1.png"))
-      lgraphic = Graphic([leveli], [1], 20, immovable = True)
+      lgraphic = Graphic([leveli], [1], 20, immovable = False)
       lobject = GameObject("Level Picture", 0, 0, lgraphic)
       gameObjects.append(lobject)
 
@@ -87,15 +87,15 @@ def generateLevel(levelNumber):
       liftai = pygame.image.load(os.path.join("graphics/liftactive.png"))
       liftsi = pygame.image.load(os.path.join("graphics/liftstopped.png"))
    
-      for x in [153, 290]:
+      for x in [306, 580]:
          liftgraphic = Graphic([liftai, liftpi, liftsi], [1, 1, 1], 5)
          liftlift = Lift(0, level.height)
-         liftobject = GameObject("Lift", x, level.height-32,
+         liftobject = GameObject("Lift", x, level.height-64,
                                  graphic=liftgraphic, lift=liftlift)
          gameObjects.append(liftobject)
    
 
-      floors = [640,517, 441, 366, 292, 215, 139, 64]
+      floors = [1280, 1034, 882, 732, 584, 430, 278, 128]
       numFloors = len(floors)
       level.floors = floors
 
@@ -113,7 +113,7 @@ def generateLevel(levelNumber):
          pText = Text("", f, (119, 79, 56), 10, 2, -15)
 
 
-         personObject = GameObject("Person", x, level.height-32, 
+         personObject = GameObject("Person", x, level.height-64, 
                                    graphic=persong, text=pText,
                                    person=personPerson)
 

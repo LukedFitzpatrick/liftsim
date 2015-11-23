@@ -11,7 +11,7 @@ def constant(id):
    elif id == "LIFT_STOPPED_FRAME_INDEX":
       return 2
    elif id == "SCREEN_WIDTH":
-      return 480
+      return 640
    elif id == "SCREEN_HEIGHT":
       return 640
    elif id == "MENU_BACKGROUND_COLOUR":

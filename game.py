@@ -93,7 +93,6 @@ def playLevel(level, screen, FPS=30):
       for o in level.gameObjects:
          (nearestFloor, index) = level.getClosestFloorHeight(o.y)
          
-         # FIX ME
          o.update(level, keysdown)          
       
       (cameraX, cameraY) = updateCamera(aLift, cameraX, cameraY, level)
