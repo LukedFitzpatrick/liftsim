@@ -23,35 +23,46 @@ class Level:
 
       return (floorHeight, index)
 
+   def findActives(self):
+      actives = []
+      for o in self.gameObjects:
+         if o.lift:
+            actives.append(o.lift)
+         if o.factory:
+            actives.append(o.factory)
+
+      return actives
+      
+
    def findLifts(self):
       lifts = []
       for o in self.gameObjects:
          if o.lift:
             lifts.append(o.lift)
       return lifts
+   
 
-
-   def findActiveLift(self):
-      for o in self.findLifts():
+   def findActiveObject(self):
+      for o in self.findActives():
          if(o.active): return o
 
-   def prepareLifts(self):
-      lifts = self.findLifts()
-      for l in lifts:
-         l.makeInactive()
+   def prepareActives(self):
+      actives = self.findActives()
+      for a in actives:
+         a.makeInactive()
       
       # but make one active
-      lifts[0].makeActive()
+      actives[0].makeActive()
 
-   def changeActiveLift(self, increment):
-      lifts = self.findLifts()
-      for i in range(0, len(lifts)):
-         if(lifts[i].active):
+   def changeActive(self, increment):
+      actives = self.findActives()
+      for i in range(0, len(actives)):
+         if(actives[i].active):
             activeIndex = i
 
-      nextIndex = (activeIndex + increment) % len(lifts)
-      lifts[activeIndex].makeInactive()
-      lifts[nextIndex].makeActive()
+      nextIndex = (activeIndex + increment) % len(actives)
+      actives[activeIndex].makeInactive()
+      actives[nextIndex].makeActive()
 
    def findObjectByName(self, name):
       for o in self.gameObjects:
@@ -88,7 +99,10 @@ def generateLevel(levelNumber):
          f = pygame.image.load(os.path.join("graphics/level1/fire" + str(n) + ".png"))
          firei.append(f)
       fgraphic = Graphic([firei], 15, animating=True)
-      fobject = GameObject("Floor 1 Fire", 50, 935, fgraphic)
+      ffactory = Factory("Level1Fire", 0, level.height)
+      fobject = GameObject("Floor 1 Fire", 50, 935, fgraphic, 
+                           factory=ffactory)
+      
       gameObjects.append(fobject)
 
 

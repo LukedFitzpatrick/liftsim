@@ -6,7 +6,7 @@ import math
 
 class GameObject:
    def __init__(self, debugName, x, y, graphic=None, text=None, text2=None,
-                lift=None, person=None):
+                lift=None, person=None, factory=None):
       self.debugName = debugName
       self.x = x
       self.y = y
@@ -35,6 +35,11 @@ class GameObject:
          self.person.parent = self
       else:
          self.person = None
+      if(factory):
+         self.factory = factory
+         self.factory.parent = self
+      else:
+         self.factory = None
 
    def update(self, level, keys):
       if(self.graphic):
@@ -360,3 +365,23 @@ class Person:
       self.parent.text.text = str(self.desiredFloor)
       self.waitTime = 0
       
+
+
+class Factory:
+   def __init__(self, name, top, bottom):
+      self.active = False
+      self.name = name
+      self.shaftTop = top
+      self.shaftBottom = bottom
+      
+
+   def update(self):
+      if self.active:
+         print "Yahooooo!"
+      
+   def makeInactive(self):
+      self.active = False
+   
+
+   def makeActive(self):
+      self.active = True
