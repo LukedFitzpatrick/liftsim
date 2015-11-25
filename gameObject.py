@@ -65,6 +65,8 @@ class Graphic:
       self.frameSetIndex = 0
       self.frameIndex = 0
       self.animating = animating
+      self.playCount = -1
+      self.stillPlaying = True
       self.width = self.frameSets[self.frameSetIndex][self.frameIndex].get_width()
       self.height = self.frameSets[self.frameSetIndex][self.frameIndex].get_height()
       self.immovable = immovable
@@ -72,9 +74,17 @@ class Graphic:
 
    def update(self):
       # possibly update the animation state here etc
-      if self.animating:
+      if self.animating and self.stillPlaying:
          self.frameIndex += 1
          self.frameIndex = self.frameIndex % len(self.frameSets[self.frameSetIndex])
+         if self.frameIndex == 0 and self.playCount > 0:
+            self.playCount -= 1
+            if self.playCount == 0:
+               self.stillPlaying = False
+               self.playCount = -1
+               # when we stop playing it, we probably want to finish on the
+               # last frame in the set
+               self.frameIndex = len(self.frameSets[self.frameSetIndex])-1
       
       if self.flip:
          i = pygame.transform.flip(self.frameSets[self.frameSetIndex][self.frameIndex], True, False)
@@ -96,11 +106,18 @@ class Graphic:
       self.frameSetIndex = frameSet
       self.frameIndex = 0
 
-
-   def continueOrStartFrameSet(self, frameSet):
+   def continueOrStartFrameSet(self, frameSet, playCount=-1):
       if self.frameSetIndex != frameSet:
          self.frameSetIndex = frameSet
          self.frameIndex = 0
+         
+         if playCount != -1:
+            self.playCount = playCount
+            print playCount
+            self.stillPlaying = True
+         else:
+            self.stillPlaying = True
+            self.playCount = -1
 
 
       
@@ -158,9 +175,9 @@ class Lift:
                self.stop()
 
          elif keyBinding("LIFT_UP") in keys:
-            self.v = -4#-= constant("LIFT_SPEED")
+            self.v = -constant("LIFT_SPEED")
          elif keyBinding("LIFT_DOWN") in keys:
-            self.v = 4#+= constant("LIFT_SPEED")
+            self.v = constant("LIFT_SPEED")
          
       self.parent.y += self.v
       if self.v != 0:
@@ -184,16 +201,24 @@ class Lift:
    def makeActive(self):
       self.active = True
       if not self.stopped:
+         self.parent.graphic.priority = 7
+         self.parent.graphic.changeFrameSet(0)
          self.parent.graphic.jumpToFrame(constant("LIFT_ACTIVE_FRAME_INDEX"))
 
    def makeInactive(self):
       self.active = False
       if not self.stopped:
+         self.parent.graphic.priority = 7
+         self.parent.graphic.changeFrameSet(0)
          self.parent.graphic.jumpToFrame(constant("LIFT_PASSIVE_FRAME_INDEX"))
 
    def stop(self):
+      self.parent.graphic.priority = 5
       self.stopped = True
-      self.parent.graphic.jumpToFrame(constant("LIFT_STOPPED_FRAME_INDEX"))
+#     self.parent.graphic.jumpToFrame(constant("LIFT_STOPPED_FRAME_INDEX"))
+      self.parent.graphic.continueOrStartFrameSet(1, playCount = 1)
+
+
 
    def unstop(self):
       self.stopped = False
@@ -254,9 +279,15 @@ class Person:
                minDistance = math.fabs(l.parent.x - self.parent.x)
                walkingToALift = True
                if l.parent.x > self.parent.x:
-                  self.move("RIGHT")
+                  if l.parent.x-self.parent.x<constant("PERSON_WALK_SPEED"):
+                     self.move("RIGHT", slow=True)
+                  else:
+                     self.move("RIGHT")
                elif l.parent.x < self.parent.x:
-                  self.move("LEFT")
+                  if self.parent.x-l.parent.x<constant("PERSON_WALK_SPEED"):
+                     self.move("RIGHT", slow=True)
+                  else:
+                     self.move("LEFT")
                else:
                   # we're exactly at the lift
                   self.lift = l
@@ -295,20 +326,25 @@ class Person:
             
      
 
-   def move(self, direction):
+   def move(self, direction, slow=False):
       if direction == "STOP":
          self.parent.graphic.continueOrStartFrameSet(0)
-         #self.parent.graphic.flip = False
          return
       
       else:
          self.parent.graphic.continueOrStartFrameSet(1)
+         
+         if slow:
+            deltax = 1
+         else:
+            deltax = constant("PERSON_WALK_SPEED")
+
          if direction == "RIGHT":
-            self.parent.x += constant("PERSON_WALK_SPEED")
+            self.parent.x += deltax
             self.parent.graphic.flip = False
          else:
             self.parent.graphic.flip = True
-            self.parent.x -= constant("PERSON_WALK_SPEED")
+            self.parent.x -= deltax
 
             self.parent.x = max(self.leftMostX, self.parent.x)
             self.parent.x = min(self.rightMostX-self.parent.graphic.width, 

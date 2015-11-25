@@ -1,7 +1,7 @@
 
 def constant(id):
    if id == "LIFT_SPEED":
-      return 0.5
+      return 10
    elif id == "LIFT_BOUNCE_FACTOR":
       return -0.4
    elif id == "LIFT_ACTIVE_FRAME_INDEX":
@@ -29,7 +29,7 @@ def constant(id):
    elif id == "LIFT_STOPPING_V":
       return 3
    elif id == "PERSON_WALK_SPEED":
-      return 1
+      return 3
    elif id == "MAX_WIGGLE":
       return 8
 

@@ -1,1 +1,1 @@
-byzanz-record --duration=30 --x=0 --y=0 --width=480 --height=660 progress/day1.gif
+byzanz-record --duration=30 --x=0 --y=0 --width=640 --height=670 projects/liftsim/progress/day7.gif

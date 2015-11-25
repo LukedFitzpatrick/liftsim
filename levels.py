@@ -76,24 +76,49 @@ def generateLevel(levelNumber):
       bgobject = GameObject("Background", 0, 0, bggraphic)
       gameObjects.append(bgobject)
 
-      # level image
+      # level images
       leveli = pygame.image.load(os.path.join("graphics/level1/level1.png"))
       lgraphic = Graphic([[leveli]], 20, immovable = False)
       lobject = GameObject("Level Picture", 0, 0, lgraphic)
       gameObjects.append(lobject)
 
+      # floor 1: fire
+      firei = []
+      for n in range(1, 9):
+         f = pygame.image.load(os.path.join("graphics/level1/fire" + str(n) + ".png"))
+         firei.append(f)
+      fgraphic = Graphic([firei], 15, animating=True)
+      fobject = GameObject("Floor 1 Fire", 50, 935, fgraphic)
+      gameObjects.append(fobject)
+
+
       # make the lifts
+      liftstopi = []
+      for n in range(1, 9):
+         i = pygame.image.load(os.path.join("graphics/liftstop" + str(n) + ".png"))
+         liftstopi.append(i)
+         liftstopi.append(i)
+         liftstopi.append(i)
+      
+      
       liftpi = pygame.image.load(os.path.join("graphics/liftpassive.png"))
       liftai = pygame.image.load(os.path.join("graphics/liftactive.png"))
       liftsi = pygame.image.load(os.path.join("graphics/liftstopped.png"))
    
-      for x in [306, 580, 900]:
-         liftgraphic = Graphic([[liftai, liftpi, liftsi]], 5)
+      for x in [450]:
+         liftgraphic = Graphic([[liftai, liftpi, liftsi], liftstopi], 7, animating = True)
          liftlift = Lift(0, level.height)
          liftobject = GameObject("Lift", x, level.height-64,
                                  graphic=liftgraphic, lift=liftlift)
          gameObjects.append(liftobject)
    
+      # and the lift line graphic
+      liftlinei = pygame.image.load(os.path.join("graphics/level1/liftline.png"))
+      liftlineg = Graphic([[liftlinei]], 4)
+      liftlineo = GameObject("Lift line", 0, 0, graphic=liftlineg)
+      gameObjects.append(liftlineo)
+
+
 
       floors = [1280, 1034, 882, 732, 584, 430, 278, 128]
       numFloors = len(floors)
