@@ -98,10 +98,12 @@ def generateLevel(levelNumber):
       for n in range(1, 9):
          f = pygame.image.load(os.path.join("graphics/level1/fire" + str(n) + ".png"))
          firei.append(f)
-      fgraphic = Graphic([firei], 15, animating=True)
-      ffactory = Factory("Level1Fire", 0, level.height)
-      fobject = GameObject("Floor 1 Fire", 50, 935, fgraphic, 
-                           factory=ffactory)
+      firedead = pygame.image.load(os.path.join("graphics/level1/firedead.png"))
+      f = pygame.font.Font("graphics/font/joystix.ttf", 13)
+      fText = Text("", f, (119, 79, 56), 10, 50, 40)
+      fgraphic = Graphic([firei, [firedead]], 15, animating=True)
+      ffactory = Factory("Level1Fire", "MASH", 0, level.height)
+      fobject = GameObject("Floor 1 Fire",50,935,graphic=fgraphic,text=fText,factory=ffactory)
       
       gameObjects.append(fobject)
 

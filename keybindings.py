@@ -23,3 +23,5 @@ def keyBinding(keyid):
       return pygame.K_d
    elif keyid == "PREVIOUS_LIFT":
       return pygame.K_a
+   elif keyid == "MASH_KEY":
+      return pygame.K_SPACE

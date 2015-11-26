@@ -32,6 +32,12 @@ def constant(id):
       return 3
    elif id == "MAX_WIGGLE":
       return 8
+   elif id == "MASH_THRESHOLD":
+      return 10
+   elif id == "MASH_GROWTH":
+      return 6
+   elif id == "MASH_DECAY":
+      return 1
 
 def pstate(id):
    if id == "WANDERING":

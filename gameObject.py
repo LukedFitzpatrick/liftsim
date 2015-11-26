@@ -54,6 +54,8 @@ class GameObject:
       if(self.person):
          lifts = level.findLifts()
          self.person.update(lifts)
+      if(self.factory):
+         self.factory.update(keys)
 
    def getRect(self):
       r = pygame.Rect(self.x, self.y, 
@@ -118,7 +120,6 @@ class Graphic:
          
          if playCount != -1:
             self.playCount = playCount
-            print playCount
             self.stillPlaying = True
          else:
             self.stillPlaying = True
@@ -368,20 +369,57 @@ class Person:
 
 
 class Factory:
-   def __init__(self, name, top, bottom):
+   def __init__(self, name, inputType, top, bottom):
       self.active = False
       self.name = name
       self.shaftTop = top
       self.shaftBottom = bottom
+      self.working = False
+      self.inputType = inputType
+      if self.inputType == "MASH":
+         self.mashBar = 0
+         self.wiggleFactor = 3
       
 
-   def update(self):
+   def update(self,keys):
       if self.active:
-         print "Yahooooo!"
-      
+         if self.inputType == "MASH":
+            if keyBinding("MASH_KEY") in keys:
+               self.mashBar += constant("MASH_GROWTH")
+            else:
+               self.mashBar = max(self.mashBar, 0)
+               
+
+      if self.inputType == "MASH":
+         self.mashBar -= constant("MASH_DECAY")
+         if self.mashBar > constant("MASH_THRESHOLD"):
+            self.work()
+         else:
+            self.stopWorking()
+         
+         if self.active:
+            self.parent.text.xoffset += self.wiggleFactor
+            self.parent.text.yoffset += self.wiggleFactor
+            self.wiggleFactor *= -1
+
+
+  
    def makeInactive(self):
       self.active = False
-   
 
    def makeActive(self):
       self.active = True
+
+
+   def work(self):
+      self.parent.text.text = ""
+      self.working = True
+      if self.name == "Level1Fire":
+         self.parent.graphic.continueOrStartFrameSet(0)
+
+
+   def stopWorking(self):
+      self.parent.text.text = "MASH!"
+      self.working = False
+      if self.name == "Level1Fire":
+         self.parent.graphic.continueOrStartFrameSet(1)
