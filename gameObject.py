@@ -41,7 +41,17 @@ class GameObject:
       else:
          self.factory = None
 
-   def update(self, level, keys):
+         
+
+   def update(self, level, keys, cameraX, cameraY):
+      
+      if ((self.lift and self.lift.active) or 
+         (self.factory and self.factory.active)):
+         registerRect((255, 255, 255),2, self.x-cameraX, self.y-cameraY, 
+                      self.graphic.width, self.graphic.height, 
+                      1, 100, "active rectangle")
+
+
       if(self.graphic):
          self.graphic.update()
       if(self.text):
@@ -55,10 +65,15 @@ class GameObject:
          lifts = level.findLifts()
          self.person.update(lifts)
       if(self.factory):
-         self.factory.update(keys)
+         keys = self.factory.update(keys)
+      
 
-   def getRect(self):
-      r = pygame.Rect(self.x, self.y, 
+
+      return (level, keys)
+
+
+   def getRect(self, cameraX=0, cameraY=0):
+      r = pygame.Rect(self.x-cameraX, self.y-cameraY, 
                       self.graphic.width, self.graphic.height)
       return r
 
@@ -151,7 +166,6 @@ class Lift:
       self.stopped = False
       self.full = False
       self.movingeffect = pygame.mixer.Sound("sound/elevatormoving.wav")
-
 
 
    def update(self, keys, nearestLevel, nearestLevelIndex):     
@@ -385,6 +399,7 @@ class Factory:
       if self.active:
          if self.inputType == "MASH":
             if keyBinding("MASH_KEY") in keys:
+               keys.remove(keyBinding("MASH_KEY"))
                self.mashBar += constant("MASH_GROWTH")
             else:
                self.mashBar = max(self.mashBar, 0)
@@ -401,7 +416,8 @@ class Factory:
             self.parent.text.xoffset += self.wiggleFactor
             self.parent.text.yoffset += self.wiggleFactor
             self.wiggleFactor *= -1
-
+      
+      return keys
 
   
    def makeInactive(self):

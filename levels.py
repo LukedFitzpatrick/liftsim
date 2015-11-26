@@ -54,21 +54,36 @@ class Level:
       # but make one active
       actives[0].makeActive()
 
-   def changeActive(self, increment):
+   def changeActive(self, newActive):
       actives = self.findActives()
       for i in range(0, len(actives)):
          if(actives[i].active):
             activeIndex = i
 
-      nextIndex = (activeIndex + increment) % len(actives)
+      nextIndex = actives.index(newActive)
       actives[activeIndex].makeInactive()
       actives[nextIndex].makeActive()
+
+
+   def reactivate(self, pos, cameraX, cameraY):
+      for a in self.findActives():
+         if a.parent.getRect(cameraX, cameraY).collidepoint(pos):
+            self.changeActive(a)
+            return       
+
+   def drawCursorRectangle(self, pos, cameraX, cameraY):
+      for a in self.findActives():
+         if a.parent.getRect(cameraX, cameraY).collidepoint(pos):
+            registerRect((0, 0, 0),2, a.parent.x-cameraX, a.parent.y-cameraY, a.parent.graphic.width, a.parent.graphic.height, 1, 101, "cursor rectangle")
+
+            return       
+
+
 
    def findObjectByName(self, name):
       for o in self.gameObjects:
          if o.debugName == name:
             return o
-
 
 
 

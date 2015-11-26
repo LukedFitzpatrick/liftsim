@@ -59,7 +59,11 @@ def playLevel(level, screen, FPS=30):
    while mainloop:
       milliseconds = clock.tick(FPS)
       #print clock.get_fps()
-         
+      
+      
+      pos = pygame.mouse.get_pos()
+
+
       for event in pygame.event.get():
          if event.type == pygame.QUIT:
             mainloop = False
@@ -69,7 +73,9 @@ def playLevel(level, screen, FPS=30):
          elif event.type == pygame.KEYUP:
             if event.key in keysdown:
                keysdown.remove(event.key)
-      
+         elif event.type == pygame.MOUSEBUTTONUP:
+            level.reactivate(pos, cameraX, cameraY)
+
       actives = level.findActives()
       # do stuff with keysdown here
       if keyBinding("PAUSE") in keysdown:
@@ -82,19 +88,16 @@ def playLevel(level, screen, FPS=30):
       if keyBinding("PREVIOUS_LEVEL") in keysdown:
          keysdown.remove(keyBinding("PREVIOUS_LEVEL"))
          return -1
-      if keyBinding("NEXT_LIFT") in keysdown:
-         keysdown.remove(keyBinding("NEXT_LIFT"))
-         level.changeActive(1)
-      if keyBinding("PREVIOUS_LIFT") in keysdown:
-         keysdown.remove(keyBinding("PREVIOUS_LIFT"))
-         level.changeActive(-1)
+     
       
       aLift = level.findActiveObject()
+      (cameraX, cameraY) = updateCamera(aLift, cameraX, cameraY, level)
+
+      level.drawCursorRectangle(pos, cameraX, cameraY)
       for o in level.gameObjects:
          (nearestFloor, index) = level.getClosestFloorHeight(o.y)
-         o.update(level, keysdown)          
-      
-      (cameraX, cameraY) = updateCamera(aLift, cameraX, cameraY, level)
+         (level, keysDown) = o.update(level, keysdown, cameraX, cameraY)          
+
       (nearestFloor, index) = level.getClosestFloorHeight(aLift.parent.y)
       
       floorTextObject = level.findObjectByName("FloorText")
