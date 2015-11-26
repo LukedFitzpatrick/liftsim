@@ -10,7 +10,7 @@ def mainMenu(screen, FPS=60):
    pygame.mixer.music.play(0)
    clearAllGraphics(screen)
    options = ["Play", "Settings", "Exit"]
-   result = showMenu("Lift Operator", options, screen)
+   result = showMenu("Factory Line", options, screen)
    pygame.mixer.music.stop()
    return result
 
@@ -52,13 +52,13 @@ def showMenu(title, optionTexts, screen, FPS=60):
                    constant("SCREEN_WIDTH"), constant("SCREEN_HEIGHT"), 
                    1, 0, "Background rect")
 
-      f = pygame.font.Font("graphics/font/yoster.ttf", 60)
+      f = pygame.font.Font("graphics/font/yoster.ttf", 30)
       registerText(title, f, constant("MENU_TITLE_COLOUR"), 20, 40, 
                    1, 1, "title")
       
-      f = pygame.font.Font("graphics/font/yoster.ttf", 50)
+      f = pygame.font.Font("graphics/font/yoster.ttf", 20)
       
-      yincrement = 80
+      yincrement = 20
       index = 0
       for o in optionTexts:
          if(index != selectedIndex):
@@ -67,7 +67,7 @@ def showMenu(title, optionTexts, screen, FPS=60):
             colour = constant("MENU_ACTIVE_COLOUR")
 
          registerText(o,f,colour,100,
-                      200+(index*yincrement), 1, 1, "menuitem")
+                      100+(index*yincrement), 1, 1, "menuitem")
          index += 1
          
       for event in pygame.event.get():

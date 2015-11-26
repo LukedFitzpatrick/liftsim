@@ -1,35 +1,21 @@
 
 def constant(id):
-   if id == "LIFT_SPEED":
-      return 10
-   elif id == "LIFT_BOUNCE_FACTOR":
-      return -0.4
-   elif id == "LIFT_ACTIVE_FRAME_INDEX":
-      return 0
-   elif id == "LIFT_PASSIVE_FRAME_INDEX":
-      return 1
-   elif id == "LIFT_STOPPED_FRAME_INDEX":
-      return 2
-   elif id == "SCREEN_WIDTH":
-      return 640
+   if id == "SCREEN_WIDTH":
+      return 256
    elif id == "SCREEN_HEIGHT":
-      return 640
+      return 256
    elif id == "MENU_BACKGROUND_COLOUR":
-      return (119, 79, 56)
+      return (200, 200, 200)
    elif id == "MENU_TITLE_COLOUR":
-      return (197, 224, 220)
+      return (0, 0, 0)
    elif id == "MENU_INACTIVE_COLOUR":
-      return (236, 229, 206)
+      return (100, 100, 100)
    elif id == "MENU_ACTIVE_COLOUR":
-      return (224, 142, 121)
+      return (50, 50, 50)
    elif id == "MAX_X_CAMERA_SHIFT":
       return 40
    elif id == "MAX_Y_CAMERA_SHIFT":
       return 40
-   elif id == "LIFT_STOPPING_V":
-      return 3
-   elif id == "PERSON_WALK_SPEED":
-      return 3
    elif id == "MAX_WIGGLE":
       return 8
    elif id == "MASH_THRESHOLD":
@@ -38,9 +24,8 @@ def constant(id):
       return 6
    elif id == "MASH_DECAY":
       return 1
-   elif id == "SCROLL_WIDTH":
-      return 150
-
+   elif id == "WORK_REQUIREMENT":
+      return 60
 
 
 def pstate(id):

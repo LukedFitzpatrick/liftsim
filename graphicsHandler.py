@@ -41,7 +41,12 @@ class GraphicsObject:
       elif self.type == "text":
          # the rep is a TextWrapper
          label = self.rep.thefont.render(self.rep.text, False, self.rep.colour)
-         screen.blit(label, (self.rep.left-camerax, self.rep.top-cameray))
+         if not self.immovable:
+            screen.blit(label, (self.rep.left-camerax, self.rep.top-cameray))
+         else:
+            screen.blit(label, (self.rep.left, self.rep.top))
+
+            
          
 
 class TextWrapper:
@@ -78,10 +83,10 @@ def registerRect(colour,thickness, left, top, width, height,
    currentGraphicsObjects.append(g)
    
 def registerText(text, thefont, colour, left, top,
-                 frameLifeSpan, priority, debugName):
+                 frameLifeSpan, priority, debugName, immovable=False):
    t = TextWrapper(text, thefont, colour, left, top)
    g = GraphicsObject("text", t, left, top, frameLifeSpan,
-                      priority, debugName)
+                      priority, debugName, immovable)
    global currentGraphicsObjects
    currentGraphicsObjects.append(g)
 

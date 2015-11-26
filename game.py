@@ -8,25 +8,14 @@ import sys
 
 
 
-def updateCamera(aLift, cameraX, cameraY, level, pos):
+def updateCamera(activeObject, level, cameraX, cameraY):
    
-   if pos[0] < constant("SCROLL_WIDTH"):
-      newcameraX = cameraX - constant("MAX_X_CAMERA_SHIFT")
-   elif pos[0] > constant("SCREEN_WIDTH") - constant("SCROLL_WIDTH"):
-      newcameraX = cameraX + constant("MAX_X_CAMERA_SHIFT")
-   else:
-      newcameraX = cameraX
-
+   newcameraX = activeObject.parent.x
+   newcameraY = activeObject.parent.y
 
    newcameraX = max(newcameraX, 0)
    newcameraX = min(newcameraX, level.width-constant("SCREEN_WIDTH"))
 
-   if pos[1] < constant("SCROLL_WIDTH"):
-      newcameraY = cameraY - constant("MAX_Y_CAMERA_SHIFT")
-   elif pos[1] > constant("SCREEN_HEIGHT") - constant("SCROLL_WIDTH"):
-      newcameraY = cameraY + constant("MAX_Y_CAMERA_SHIFT")
-   else:
-      newcameraY = cameraY
 
    newcameraY = max(newcameraY, 0)
    newcameraY = min(newcameraY, level.height-constant("SCREEN_HEIGHT"))  
@@ -70,12 +59,14 @@ def playLevel(level, screen, FPS=30):
 
    cameraX = 0
    cameraY = 0
+   
+   wiggle = 1
+
 
    while mainloop:
       milliseconds = clock.tick(FPS)
       #print clock.get_fps()
-      
-      
+            
       pos = pygame.mouse.get_pos()
 
 
@@ -88,10 +79,9 @@ def playLevel(level, screen, FPS=30):
          elif event.type == pygame.KEYUP:
             if event.key in keysdown:
                keysdown.remove(event.key)
-         elif event.type == pygame.MOUSEBUTTONUP:
-            level.reactivate(pos, cameraX, cameraY)
 
       actives = level.findActives()
+
       # do stuff with keysdown here
       if keyBinding("PAUSE") in keysdown:
          keysdown.remove(keyBinding("PAUSE"))
@@ -105,19 +95,27 @@ def playLevel(level, screen, FPS=30):
          return -1
      
       
-      aLift = level.findActiveObject()
-      (cameraX, cameraY) = updateCamera(aLift, cameraX, cameraY, level, pos)
+      a = level.findActiveObject()
+      if a.finished:
+         if level.allDone():
+            return 1
+         else:
+            level.changeActive(1)
+            a = level.findActiveObject()
 
-      level.drawCursorRectangle(pos, cameraX, cameraY)
-      for o in level.gameObjects:
-         (nearestFloor, index) = level.getClosestFloorHeight(o.y)
-         (level, keysDown) = o.update(level, keysdown, cameraX, cameraY)          
-
-      (nearestFloor, index) = level.getClosestFloorHeight(aLift.parent.y)
+      level.findObjectByName("InstructionText").text.xoffset += wiggle
+      level.findObjectByName("InstructionText").text.yoffset += wiggle
+      wiggle*=-1
+      if a.inputType == "MASH":
+         level.findObjectByName("InstructionText").text.text = "MASH!"
+         
       
-      floorTextObject = level.findObjectByName("FloorText")
-      floorTextObject.text.text = "Floor " + str(index)
-      floorTextObject.y = nearestFloor  + 4
-      floorTextObject.x = aLift.parent.x + 32
+
+      (cameraX, cameraY) = updateCamera(a, level, cameraX, cameraY)
+
+      for o in level.gameObjects:
+         (level, keysDown) = o.update(level, keysdown)          
+
+   
 
       displayAll(screen, cameraX, cameraY)
