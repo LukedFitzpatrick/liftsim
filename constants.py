@@ -23,7 +23,7 @@ def constant(id):
    elif id == "MENU_ACTIVE_COLOUR":
       return (224, 142, 121)
    elif id == "MAX_X_CAMERA_SHIFT":
-      return 10
+      return 40
    elif id == "MAX_Y_CAMERA_SHIFT":
       return 40
    elif id == "LIFT_STOPPING_V":
@@ -38,6 +38,10 @@ def constant(id):
       return 6
    elif id == "MASH_DECAY":
       return 1
+   elif id == "SCROLL_WIDTH":
+      return 150
+
+
 
 def pstate(id):
    if id == "WANDERING":

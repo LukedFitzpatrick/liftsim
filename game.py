@@ -8,14 +8,29 @@ import sys
 
 
 
-def updateCamera(aLift, cameraX, cameraY, level):
-   newcameraY = aLift.parent.y - (constant("SCREEN_HEIGHT")/2)
-   newcameraY = max(newcameraY, aLift.shaftTop)
-   newcameraY = min(newcameraY, aLift.shaftBottom-constant("SCREEN_HEIGHT"))
-      
-   newcameraX = aLift.parent.x - (constant("SCREEN_WIDTH")/2)
+def updateCamera(aLift, cameraX, cameraY, level, pos):
+   
+   if pos[0] < constant("SCROLL_WIDTH"):
+      newcameraX = cameraX - constant("MAX_X_CAMERA_SHIFT")
+   elif pos[0] > constant("SCREEN_WIDTH") - constant("SCROLL_WIDTH"):
+      newcameraX = cameraX + constant("MAX_X_CAMERA_SHIFT")
+   else:
+      newcameraX = cameraX
+
+
    newcameraX = max(newcameraX, 0)
    newcameraX = min(newcameraX, level.width-constant("SCREEN_WIDTH"))
+
+   if pos[1] < constant("SCROLL_WIDTH"):
+      newcameraY = cameraY - constant("MAX_Y_CAMERA_SHIFT")
+   elif pos[1] > constant("SCREEN_HEIGHT") - constant("SCROLL_WIDTH"):
+      newcameraY = cameraY + constant("MAX_Y_CAMERA_SHIFT")
+   else:
+      newcameraY = cameraY
+
+   newcameraY = max(newcameraY, 0)
+   newcameraY = min(newcameraY, level.height-constant("SCREEN_HEIGHT"))  
+   
    
    if(newcameraY > cameraY):
       delta = newcameraY - cameraY
@@ -91,7 +106,7 @@ def playLevel(level, screen, FPS=30):
      
       
       aLift = level.findActiveObject()
-      (cameraX, cameraY) = updateCamera(aLift, cameraX, cameraY, level)
+      (cameraX, cameraY) = updateCamera(aLift, cameraX, cameraY, level, pos)
 
       level.drawCursorRectangle(pos, cameraX, cameraY)
       for o in level.gameObjects:

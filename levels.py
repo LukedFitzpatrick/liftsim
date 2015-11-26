@@ -74,8 +74,7 @@ class Level:
    def drawCursorRectangle(self, pos, cameraX, cameraY):
       for a in self.findActives():
          if a.parent.getRect(cameraX, cameraY).collidepoint(pos):
-            registerRect((0, 0, 0),2, a.parent.x-cameraX, a.parent.y-cameraY, a.parent.graphic.width, a.parent.graphic.height, 1, 101, "cursor rectangle")
-
+            registerRect((0, 0, 0),2, a.parent.x-cameraX, a.parent.y-cameraY, a.parent.graphic.width, a.parent.graphic.height, 1, 99, "cursor rectangle")          
             return       
 
 
@@ -115,12 +114,18 @@ def generateLevel(levelNumber):
          firei.append(f)
       firedead = pygame.image.load(os.path.join("graphics/level1/firedead.png"))
       f = pygame.font.Font("graphics/font/joystix.ttf", 13)
-      fText = Text("", f, (119, 79, 56), 10, 50, 40)
+      fText = Text("", f, (119, 79, 56), 10, 60, 0)
       fgraphic = Graphic([firei, [firedead]], 15, animating=True)
       ffactory = Factory("Level1Fire", "MASH", 0, level.height)
-      fobject = GameObject("Floor 1 Fire",50,935,graphic=fgraphic,text=fText,factory=ffactory)
+      fobject = GameObject("Floor 1 Fire",50,990,graphic=fgraphic,text=fText,factory=ffactory)
       
       gameObjects.append(fobject)
+
+      # floor 1 heater
+      heateri = pygame.image.load(os.path.join("graphics/level1/heater.png"))
+      heaterg = Graphic([[heateri]], 15, animating=True)
+      heatero = GameObject("Floor 1 Heater", 30, 909, graphic=heaterg)
+      gameObjects.append(heatero)
 
 
       # make the lifts
